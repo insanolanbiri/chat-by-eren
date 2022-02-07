@@ -1,4 +1,4 @@
-import socket, select
+import socket, select,datetime
 
 #Function to send message to all connected clients
 def send_to_all (sock, message):
@@ -24,12 +24,12 @@ if __name__ == "__main__":
 	server_socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 
 	server_socket.bind(("localhost", port))
-	server_socket.listen(10) #listen atmost 10 connection at one time
+	server_socket.listen(20) #listen atmost 10 connection at one time
 
 	# Add server socket to the list of readable connections
 	connected_list.append(server_socket)
 
-	print "\33[32m \t\t\t\tSERVER WORKING \33[0m" 
+	print("\33[32m \t\t\t\tChat by Eren: Sunucu çalışır durumda\33[0m")
 
 	while 1:
         # Get the list sockets which are ready to be read through select
@@ -47,7 +47,7 @@ if __name__ == "__main__":
                 
                 #if repeated username
 				if name in record.values():
-					sockfd.send("\r\33[31m\33[1m Username already taken!\n\33[0m")
+					sockfd.send(bytes("\r\33[31m\33[1m bu kullanıcı adı alınmış\n\33[0m",'utf-8'))
 					del record[addr]
 					connected_list.remove(sockfd)
 					sockfd.close()
@@ -55,39 +55,38 @@ if __name__ == "__main__":
 				else:
                     #add name and address
 					record[addr]=name
-					print "Client (%s, %s) connected" % addr," [",record[addr],"]"
-					sockfd.send("\33[32m\r\33[1m Welcome to chat room. Enter 'tata' anytime to exit\n\33[0m")
-					send_to_all(sockfd, "\33[32m\33[1m\r "+name+" joined the conversation \n\33[0m")
+					print("%s, %s bağlandı" % addr," [",record[addr].decode(),"]")
+					sockfd.send(bytes("\33[32m\r\33[1m Chat by Eren'e hoşgeldiniz\n ==========================\n\n chatten ayrılmak istediğiniz zaman exit yazın\n not: istenmeyecek mesajlar gönderildiği taktirde banlanacaksınız.\n\n\33[0m",'utf-8'))
+					send_to_all(sockfd, bytes("\33[32m\33[1m\r "+name.decode()+" bağlandı \n\33[0m",'utf-8'))
+					continue
 
 			#Some incoming message from a client
 			else:
 				# Data from client
 				try:
-					data1 = sock.recv(buffer)
-					#print "sock is: ",sock
-					data=data1[:data1.index("\n")]
-					#print "\ndata received: ",data
+					data1 = sock.recv(buffer).decode()
+					data=data1.rstrip("\n")
                     
                     #get addr of client sending the message
 					i,p=sock.getpeername()
-					if data == "tata":
-						msg="\r\33[1m"+"\33[31m "+record[(i,p)]+" left the conversation \33[0m\n"
-						send_to_all(sock,msg)
-						print "Client (%s, %s) is offline" % (i,p)," [",record[(i,p)],"]"
+					if data == "exit":
+						msg="\r\33[1m"+"\33[31m "+record[(i,p)].decode()+" ayrıldı\33[0m\n"
+						send_to_all(sock,bytes(msg,'utf-8'))
+						print("%s, %s çevrimdışı" % (i,p)," [",record[(i,p)].decode(),"]")
 						del record[(i,p)]
 						connected_list.remove(sock)
 						sock.close()
 						continue
 
 					else:
-						msg="\r\33[1m"+"\33[35m "+record[(i,p)]+": "+"\33[0m"+data+"\n"
-						send_to_all(sock,msg)
+						msg="\r\33[1m"+"\33[35m "+datetime.datetime.now().strftime("%H:%M: ")+record[(i,p)].decode()+": "+"\33[0m"+data+"\n"
+						send_to_all(sock,bytes(msg,'utf-8'))
             
                 #abrupt user exit
 				except:
 					(i,p)=sock.getpeername()
-					send_to_all(sock, "\r\33[31m \33[1m"+record[(i,p)]+" left the conversation unexpectedly\33[0m\n")
-					print "Client (%s, %s) is offline (error)" % (i,p)," [",record[(i,p)],"]\n"
+					send_to_all(sock, bytes("\r\33[31m \33[1m"+record[(i,p)].decode()+" bağlantısı kayboldu\33[0m\n",'utf-8'))
+					print("Hata: %s, %s çevrimdışı" % (i,p)," [",record[(i,p)].decode(),"]\n")
 					del record[(i,p)]
 					connected_list.remove(sock)
 					sock.close()
