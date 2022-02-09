@@ -1,7 +1,7 @@
 import socket, select, sys
 
 def display():
-    #FIXME: display() fonsiyonunda saat yok
+    # TODO: display() fonsiyonunda saat yok
 	you="\33[33m\33[1m"+" sen: "+"\33[0m"
 	sys.stdout.write(you)
 	sys.stdout.flush()
@@ -19,7 +19,7 @@ def main():
     except:
         print("\33[31m\33[1m sunucuya bağlanılamadı \33[0m")
         sys.exit()
-    # bağlanıldıysa
+    # bağlanıldıysa:
     s.send(bytes(name,'utf-8'))
     while True:
         socket_list = [sys.stdin, s]
@@ -28,8 +28,8 @@ def main():
             if sock == s: # sunucudan gelen mesaj
                 data = sock.recv(4096)
                 if not data:
-                    if msg=='exit\n': print('\33[31m\33[1m \rayrıldınız\n \33[0m')
-                    else: print('\33[31m\33[1m \rbağlantı kesildi!\n \33[0m')
+                    if msg=='exit\n': print('\33[31m\33[1m \rayrıldın \33[0m')
+                    else: print('\33[31m\33[1m \rbağlantı kesildi! \33[0m')
                     sys.exit()
                 else:
                     sys.stdout.write(data.decode())
