@@ -2,7 +2,7 @@ from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
 import datetime
 
-HOST = input("sunucu adresi: ")
+HOST = "0.0.0.0"
 PORT = 5544
 BUFFSIZE = 1024
 NAME="Chat by Eren"
