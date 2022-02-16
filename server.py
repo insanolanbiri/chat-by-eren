@@ -33,6 +33,12 @@ def handle(client):
         client.send(bytes("bu kullanıcı adı alınmış, başka bir tane ile dene", "utf8"))
         client.close()
         return None
+    elif "31" in name:
+        client.send(bytes("hay senin girceğin kullanıcı adını .......", "utf8"))
+        if "CokKomikBirArkadas" in clients:
+            client.close()
+            return None
+        name="CokKomikBirArkadas"
     client.send(bytes(f"{NAME}'e hoşgeldin {name}",'utf8'))
     time.sleep(0.1)
     client.send(bytes(f"eğer istenmeyebilecek bir mesaj atarsan banlanacaksın",'utf8'))
