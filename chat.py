@@ -17,14 +17,17 @@ def receive():
             msgList.yview(END)
         except OSError:
             close()
-            break
 
 def send(event=None):
     msg = myMsg.get()
     myMsg.set("")
     if msg == "exit":
-        clientSocket.close()
-        top.quit()
+        try:
+            try: clientSocket.send(bytes(msg,'utf8'))
+            except: pass
+            clientSocket.close()
+        finally:
+            top.quit()
     else:
         try: clientSocket.send(bytes(msg,'utf8'))
         except: pass
@@ -45,7 +48,7 @@ if __name__ == '__main__':
     messageFrame = tkinter.Frame(top)
     scrollbar = tkinter.Scrollbar(messageFrame)
 
-    msgList = tkinter.Listbox(top,bd=0, bg="white", height="8", width="55", font="Arial",)
+    msgList = tkinter.Listbox(top,bd=0, bg="white", height="8", width="55", font=("Arial", 11), yscrollcommand=scrollbar.set)
     scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y,)
     msgList['yscrollcommand'] = scrollbar.set
     msgList.pack(side=tkinter.LEFT, fill=tkinter.BOTH)

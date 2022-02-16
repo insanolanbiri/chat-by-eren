@@ -1,6 +1,6 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
-import datetime
+import datetime, time
 
 HOST = "0.0.0.0"
 PORT = 5544
@@ -23,8 +23,9 @@ def accept():
 
 def handle(client):
     name = client.recv(BUFFSIZE).decode("utf8")
-    client.send(bytes(f"{NAME}'e hoşgeldin {name}, sohbetten ayrılmak istediğin zaman exit yaz.",'utf8'))
-    client.send(bytes(f"bu arada unutma ki eğer istenmeyebilecek bir mesaj atarsan banlanacaksın",'utf8'))
+    client.send(bytes(f"{NAME}'e hoşgeldin {name}",'utf8'))
+    time.sleep(0.1)
+    client.send(bytes(f"eğer istenmeyebilecek bir mesaj atarsan banlanacaksın",'utf8'))
     msg = f"{name} bağlandı"
     broadcast(bytes(msg, 'utf8'))
     print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) bağlandı")
@@ -33,26 +34,28 @@ def handle(client):
         try:
             msg = client.recv(BUFFSIZE)
         except:
+            msg = bytes("exit", "utf8")
             print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) bağlantısı kesildi")
             del clients[client]
-            del addresses[client]
             broadcast(bytes(f"{name} bağlantısı kesildi",'utf8'))
         if msg != bytes("exit", "utf8"):
             dt=datetime.datetime.now().strftime("%H:%M")
             broadcast(msg, f"{dt}: {name}: ")
         else:
             print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) ayrıldı")
-            client.send(bytes("exit", "utf8"))
-            client.close()
-            broadcast(bytes(f"{name} ayrıldı", "utf8"))
-            del clients[client]
-            del addresses[client]
-        
+            try:
+                client.send(bytes("exit", "utf8"))
+                client.close()
+            finally:
+                del clients[client]
+                broadcast(bytes(f"{name} ayrıldı", "utf8"))
             break
 
 def broadcast(msg,prefix = ""):
     for client in clients:
-        client.send(bytes(prefix,'utf8')+msg)
+        try:
+            client.send(bytes(prefix,'utf8')+msg)
+        except: pass
 
 
 if __name__ == "__main__":
