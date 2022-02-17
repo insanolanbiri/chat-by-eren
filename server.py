@@ -6,7 +6,7 @@ HOST = "0.0.0.0"
 PORT = 5544
 BUFFSIZE = 1024
 NAME="Chat by Eren"
-
+blacklist = [line.strip() for line in open("blacklist.txt", 'r')]
 
 ADDR = (HOST,PORT)
 SERVER = socket(AF_INET,SOCK_STREAM)
@@ -16,86 +16,132 @@ addresses = {}
 banned_list=[]
 muted_list=[]
 
+def welcomeToTurkey(client,name):
+    global NAME
+    welcome=(f"{NAME}'e hoşgeldin {name}",
+            "UYARI: BU CHAT 7/24 REİS TARAFINDAN İNCELENMEKTEDİR",
+            "BAŞINIZA BELA OLACAK YAZILAR YAZMAYIN. UYARILDINIZ!",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⣤⣴⣶⣿⣿⣿⣿⣶⣦⣄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⣰⣿⣿⡿⠛⠉⠉⠉⠉⠄⠄⠙⣧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⢠⣿⣿⡏⠄⠄⠄⠄⠄⠄⠄⠄⠄⢸⡇⠄⠄⠄⠄⠄⠄⠄⠄⠄",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⢸⣿⣿⣧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠸⡿⠄⠄⠄⠄⠄⠄⠄⠄⠄     reis",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⢸⣿⣿⢿⣤⠆⢵⡆⠄⢒⠒⠂⠄⠄⠃⠄⠄⠄⠄⠄⠄⠄⠄⠄ <-- of",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠈⢿⣿⡌⠄⠄⣸⡃⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄     turkey",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠘⢿⣿⢀⢘⠻⢧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⢻⡀⠸⣿⡃⠄⠚⠁⠄⠄⢀⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣠⡔⣿⣷⡀⠄⠄⠄⠄⠄⠄⣸⣿⣶⣤⣄⣀⠄⠄⠄⠄⠄",
+            "⠄⠄⠄⠄⢀⣀⣤⣶⣾⣿⣿⣇⠙⢿⣿⠒⠒⠄⠄⠄⢀⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⣄",
+            "⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⠛⠄⠄⠈⣀⣀⠄⠄⠄⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠄⠄⢸⣿⣿⡷⠂⢀⣿⣿⣿⣹⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠄⠄⣸⣿⣿⡇⠄⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠄⠄⣿⣿⣿⡇⠄⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "reis tarafından uyarıldın dostum")
+    time.sleep(0.1)
+    for line in welcome:
+        client.send(bytes(line, "utf16"))
+        time.sleep(0.1)
+
+def check31(text):
+    try:
+        a=float(eval(text))
+        return a==31.0
+    except: return False
+
 def accept():
     while True:
         client, clientAddress = SERVER.accept()
-        client.send(bytes("seni mükemmel bir şekilde tanımlayan bir kullanıcı seçip yolla", "utf8"))
+        client.send(bytes("seni *mükemmel* bir şekilde tanımlayan bir kullanıcı seçip yolla", "utf16"))
         addresses[client] = clientAddress
         Thread(target=handle, args=(client,)).start()
 
 def handle(client):
-    name = client.recv(BUFFSIZE).decode("utf8")
+    name = client.recv(BUFFSIZE).decode("utf16")
+    rev_clients=[v for k,v in clients.items()]
     if name in banned_list:
-        client.send(bytes("banlanmışsın dostum", "utf8"))
+        client.send(bytes("banlanmışsın dostum", "utf16"))
         client.close()
         return None
-    if name in clients:
-        client.send(bytes("bu kullanıcı adı alınmış, başka bir tane ile dene", "utf8"))
+    if name in rev_clients:
+        client.send(bytes("bu kullanıcı adı alınmış, başka bir tane dene", "utf16"))
         client.close()
         return None
-    elif "31" in name:
-        client.send(bytes("hay senin girceğin kullanıcı adını .......", "utf8"))
-        if "CokKomikBirArkadas" in clients:
-            client.close()
-            return None
-        name="CokKomikBirArkadas"
-    client.send(bytes(f"{NAME}'e hoşgeldin {name}",'utf8'))
-    time.sleep(0.1)
-    client.send(bytes(f"eğer istenmeyebilecek bir mesaj atarsan banlanacaksın",'utf8'))
+    if ("31" in name) or check31(name) or any(kelime in name.lower() for kelime in blacklist):
+        client.send(bytes("hay senin gireceğin kullanıcı adını .......", "utf16"))
+        time.sleep(0.1)
+        client.send(bytes("aklını ....... bu mu seni mükemmel tanımlıyor aq", "utf16"))
+        for i in range(1,50):
+            if f"CokKomikBirArkadas{i}" in rev_clients:
+                continue
+            else:
+                name = f"CokKomikBirArkadas{i}"
+                break
+    welcomeToTurkey(client,name)
     msg = f"{name} bağlandı"
-    broadcast(bytes(msg, 'utf8'))
+    broadcast(bytes(msg, 'utf16'))
     print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) bağlandı")
     clients[client] = name
     while True:
         try:
             msg = client.recv(BUFFSIZE)
         except:
-            msg = bytes("exit", "utf8")
+            msg = bytes("exit", "utf16")
             print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) bağlantısı kesildi")
             del clients[client]
-            broadcast(bytes(f"{name} bağlantısı kesildi",'utf8'))
+            broadcast(bytes(f"{name} bağlantısı kesildi",'utf16'))
+            break
         if name in banned_list:
             del clients[client]
-            client.send(bytes("banlandın dostum", "utf8"))
+            client.send(bytes("banlandın dostum", "utf16"))
             client.close()
         elif name in muted_list:
-            client.send(bytes("susturuldun dostum, mesajların iletilmiyor", "utf8"))
-        elif msg == bytes("exit", "utf8"):
+            client.send(bytes("susturuldun dostum, mesajların iletilmiyor", "utf16"))
+        elif msg == bytes("exit", "utf16"):
             print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) ayrıldı")
             try:
-                client.send(bytes("exit", "utf8"))
+                client.send(bytes("exit", "utf16"))
                 client.close()
             finally:
                 del clients[client]
-                broadcast(bytes(f"{name} ayrıldı", "utf8"))
+                broadcast(bytes(f"{name} ayrıldı", "utf16"))
             break
-        elif msg[:5] == bytes("/ban ", "utf8"):
-            if not msg[5:].decode() in clients:
-                banned_list.append(msg[5:].decode("utf8"))
+        elif msg[:5] == bytes("/ban ", "utf16"):
+            if msg[5:].decode("utf16") in banned_list:
+                client.send(bytes("bu kullanıcı zaten banlanmış", "utf16"))
+            elif msg[5:].decode("utf16")==name:
+                client.send(bytes("kendi kendini banlamak çok aptalca, banlamıyorum", "utf16"))
+            elif msg[5:].decode("utf16") in clients:
+                banned_list.append(msg[5:].decode("utf16"))
+                broadcast(bytes(f"{msg[5:].decode()} kişisi {name} tarafından banlandı", "utf16"))
             else:
-                client.send(bytes("öyle biri yok !?", "utf8"))
-            broadcast(bytes(f"{msg[5:].decode()} kişisi {name} tarafından banlandı", "utf8"))
-        elif msg[:6] == bytes("/mute ", "utf8"):
-            if not msg[5:].decode() in clients:
-                muted_list.append(msg[6:].decode("utf8"))
+                client.send(bytes("öyle biri yok!?", "utf16"))
+            
+        elif msg[:6] == bytes("/mute ", "utf16"):
+            if msg[6:].decode("utf16") in muted_list:
+                client.send(bytes("bu kullanıcı zaten susturulmuş", "utf16"))
+            elif msg[6:].decode("utf16")==name:
+                client.send(bytes("kendi kendini banlamak çok aptalca, banlamıyorum", "utf16"))
+            elif msg[6:].decode("utf16") in clients:
+                muted_list.append(msg[6:].decode("utf16"))
+                broadcast(bytes(f"{msg[6:].decode()} kişisi {name} tarafından susturuldu", "utf16"))
             else:
-                client.send(bytes("öyle biri yok !?", "utf8"))
-            broadcast(bytes(f"{msg[6:].decode()} kişisi {name} tarafından susturuldu", "utf8"))
-        elif msg[:8] == bytes("/unmute ", "utf8"):
-            try:
-                muted_list.remove(msg[8:].decode("utf8"))
-            except:
-                client.send(bytes("öyle biri yok !?", "utf8"))
-            broadcast(bytes(f"{msg[8:].decode()} kişisi {name} tarafından un-susturuldu", "utf8"))
+                client.send(bytes("öyle biri yok!?", "utf16"))
+        elif msg[:8] == bytes("/unmute ", "utf16"):
+            if msg[8:].decode("utf16") in muted_list:
+                muted_list.remove(msg[8:].decode("utf16"))
+                broadcast(bytes(f"{msg[8:].decode()} kişisi {name} tarafından un-susturuldu", "utf16"))
+            else:
+                client.send(bytes("öyle biri yok!?", "utf16"))
+        elif msg[:1] == bytes("/", "utf16"):
+            client.send(bytes("chatbyeren: fatal: command not found", "utf16"))
         else:
             dt=datetime.datetime.now().strftime("%H:%M")
             broadcast(msg, f"{dt}: {name}: ")
 
 def broadcast(msg,prefix = ""):
     for client in clients:
-        try:
-            client.send(bytes(prefix,'utf8')+msg)
-        except: pass
+        try: client.send(bytes(prefix,'utf16')+msg)
+        except: del clients[client]
 
 
 if __name__ == "__main__":

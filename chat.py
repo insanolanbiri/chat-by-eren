@@ -12,7 +12,7 @@ def receive():
     stop = False
     while True and not stop:
         try:
-            msg = clientSocket.recv(BUFFSIZE).decode('utf8')
+            msg = clientSocket.recv(BUFFSIZE).decode('utf16')
             msgList.insert(tkinter.END,msg)
             msgList.yview(END)
         except OSError:
@@ -23,20 +23,22 @@ def send(event=None):
     myMsg.set("")
     if msg == "exit":
         try:
-            try: clientSocket.send(bytes(msg,'utf8'))
-            except: pass
-            clientSocket.close()
+            try: clientSocket.send(bytes(msg,'utf16'))
+            finally: clientSocket.close()
         finally:
             top.quit()
-    else:
-        try: clientSocket.send(bytes(msg,'utf8'))
+    elif len(msg)>500:
+        msgList.insert(tkinter.END,"mesajın çok uzundu, gönderemedim")
+        msgList.yview(END)
+    elif msg != "":
+        try: clientSocket.send(bytes(msg,'utf16'))
         except: pass
 
 def close(event=None):
     try:
         myMsg.set("exit")
         send()
-        top.destroy()
+        top.exit()
     finally: exit(0)
 
 if __name__ == '__main__':

@@ -1,0 +1,18 @@
+!Banlanınca çöküyor (false warning çıktı :))
+
+***Ayrılınca hata veriyor***
+
+ign:Ekle: Çok satırlı (gerek yok)
+
+!Çok yazınca çöküyor (onaylanmadı)
+
+****Try; except: pass saçmalıkları
+
+!Çok karakterliyazmanın engellenmesi
+
+!reis
+ign:txt blacklist
+
+!kullanıcı adı blacklist (+bkz 31)
+
+impsb:Pythonanywhere
