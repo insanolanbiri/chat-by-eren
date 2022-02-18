@@ -1,6 +1,6 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
-import tkinter
+import tkinter, sys
 from tkinter.constants import DISABLED, END, FALSE
 
 
@@ -9,37 +9,28 @@ BUFFSIZE = 1024
 NAME="Chat by Eren"
 
 def receive():
-    stop = False
-    while True and not stop:
+    while True:
         try:
             msg = clientSocket.recv(BUFFSIZE).decode('utf16')
             msgList.insert(tkinter.END,msg)
             msgList.yview(END)
-        except OSError:
-            close()
+        except: sys.exit(1)
 
 def send(event=None):
     msg = myMsg.get()
     myMsg.set("")
     if msg == "exit":
-        try:
-            try: clientSocket.send(bytes(msg,'utf16'))
-            finally: clientSocket.close()
-        finally:
-            top.quit()
+        close()
     elif len(msg)>500:
         msgList.insert(tkinter.END,"mesajın çok uzundu, gönderemedim")
         msgList.yview(END)
     elif msg != "":
         try: clientSocket.send(bytes(msg,'utf16'))
-        except: pass
+        except: close()
 
 def close(event=None):
-    try:
-        myMsg.set("exit")
-        send()
-        top.exit()
-    finally: exit(0)
+    try: clientSocket.close()
+    finally: sys.exit(1)
 
 if __name__ == '__main__':
     top = tkinter.Tk()
@@ -77,13 +68,14 @@ if __name__ == '__main__':
     HOST=""
     while not HOST:
         try:
-            inp=int(input("sunucu seç:\n 1) BT4 (exclusive bilgisayarımız)\n 2) başka bir sunucu\n\nseçtiğin sunucunun numarası: "))
+            inp=int(input("sunucu seç:\n 1) BT4 (exclusive bilgisayarımız)\n 2) localhost\n 3) başka bir sunucu\n\nseçtiğin sunucunun numarası: "))
             if inp==1: HOST="BT4"
-            elif inp==2: HOST=input("\n\nBT4'ü (kutsal bilgisayarımızı) kullanmadığına üzüldüm doğrusu.\n\nher neyse, hangi sunucu: ")
+            elif inp==2: HOST="localhost"
+            elif inp==3: HOST=input("\n\nBT4'ü (kutsal bilgisayarımızı) kullanmadığına üzüldüm doğrusu.\n\nher neyse, hangi sunucu: ")
             else: raise ValueError
         except ValueError:
             print("\n\n\ttek yapman gereken klavyedeki lanet olası sayıya basmak gerizekalı\n")
-            exit(code=1)
+            exit(1)
 
     ADDR = (HOST, PORT)
     clientSocket = socket(AF_INET, SOCK_STREAM)

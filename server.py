@@ -40,7 +40,7 @@ def welcomeToTurkey(client,name):
     time.sleep(0.1)
     for line in welcome:
         client.send(bytes(line, "utf16"))
-        time.sleep(0.1)
+        time.sleep(0.12)
 
 def check31(text):
     try:
@@ -85,54 +85,66 @@ def handle(client):
         try:
             msg = client.recv(BUFFSIZE)
         except:
-            msg = bytes("exit", "utf16")
             print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) bağlantısı kesildi")
-            del clients[client]
+            try: del clients[client]
+            except: pass
             broadcast(bytes(f"{name} bağlantısı kesildi",'utf16'))
-            break
+            return None
         if name in banned_list:
             del clients[client]
             client.send(bytes("banlandın dostum", "utf16"))
             client.close()
+            return None
         elif name in muted_list:
             client.send(bytes("susturuldun dostum, mesajların iletilmiyor", "utf16"))
-        elif msg == bytes("exit", "utf16"):
-            print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) ayrıldı")
-            try:
-                client.send(bytes("exit", "utf16"))
-                client.close()
-            finally:
-                del clients[client]
-                broadcast(bytes(f"{name} ayrıldı", "utf16"))
-            break
-        elif msg[:5] == bytes("/ban ", "utf16"):
-            if msg[5:].decode("utf16") in banned_list:
+        elif msg.decode("utf16")[:6] == "/kick ":
+            usertokick = msg.decode("utf16")[6:]
+            if usertokick == name:
+                client.send(bytes("kendi kendini kicklemek çok aptalca, kicklemiyorum", "utf16"))
+            elif usertokick in [v for k,v in clients.items()]:
+                try:
+                    kick_client = [k for k,v in clients.items() if v == usertokick][0]
+                    kick_client.send(bytes("kicklendin dostum", "utf16"))
+                    kick_client.close()
+                finally:
+                    try: del clients[kick_client]
+                    finally: broadcast(bytes(f"{usertokick} kişisi {name} tarafından kicklendi", "utf16"))
+            else:
+                client.send(bytes("öyle biri yok!?", "utf16"))
+        elif msg.decode("utf16")[:5] == "/ban ":
+            usertoban = msg.decode("utf16")[5:]
+            if usertoban in banned_list:
                 client.send(bytes("bu kullanıcı zaten banlanmış", "utf16"))
-            elif msg[5:].decode("utf16")==name:
+            elif usertoban==name:
                 client.send(bytes("kendi kendini banlamak çok aptalca, banlamıyorum", "utf16"))
-            elif msg[5:].decode("utf16") in clients:
-                banned_list.append(msg[5:].decode("utf16"))
-                broadcast(bytes(f"{msg[5:].decode()} kişisi {name} tarafından banlandı", "utf16"))
+            elif usertoban in [v for k,v in clients.items()]:
+                banned_list.append(usertoban)
+                ban_cilent = [k for k,v in clients.items() if v == usertoban][0]
+                ban_cilent.send(bytes("banlandın dostum", "utf16"))
+                ban_cilent.close()
+                del clients[ban_cilent]
+                broadcast(bytes(f"{usertoban} kişisi {name} tarafından banlandı", "utf16"))
             else:
                 client.send(bytes("öyle biri yok!?", "utf16"))
-            
-        elif msg[:6] == bytes("/mute ", "utf16"):
-            if msg[6:].decode("utf16") in muted_list:
+        elif msg.decode("utf16")[:6] == "/mute ":
+            usertomute = msg.decode("utf16")[6:]
+            if usertomute in muted_list:
                 client.send(bytes("bu kullanıcı zaten susturulmuş", "utf16"))
-            elif msg[6:].decode("utf16")==name:
-                client.send(bytes("kendi kendini banlamak çok aptalca, banlamıyorum", "utf16"))
-            elif msg[6:].decode("utf16") in clients:
-                muted_list.append(msg[6:].decode("utf16"))
-                broadcast(bytes(f"{msg[6:].decode()} kişisi {name} tarafından susturuldu", "utf16"))
+            elif usertomute==name:
+                client.send(bytes("kendi kendini susturmak çok aptalca, susturmuyorum", "utf16"))
+            elif usertomute in [v for k,v in clients.items()]:
+                muted_list.append(usertomute)
+                broadcast(bytes(f"{usertomute} kişisi {name} tarafından susturuldu", "utf16"))
             else:
                 client.send(bytes("öyle biri yok!?", "utf16"))
-        elif msg[:8] == bytes("/unmute ", "utf16"):
-            if msg[8:].decode("utf16") in muted_list:
-                muted_list.remove(msg[8:].decode("utf16"))
-                broadcast(bytes(f"{msg[8:].decode()} kişisi {name} tarafından un-susturuldu", "utf16"))
+        elif msg.decode("utf16")[:8] == "/unmute ":
+            usertounmute = msg.decode("utf16")[8:]
+            if usertounmute in muted_list:
+                muted_list.remove(usertounmute)
+                broadcast(bytes(f"{usertounmute} kişisi {name} tarafından un-susturuldu", "utf16"))
             else:
                 client.send(bytes("öyle biri yok!?", "utf16"))
-        elif msg[:1] == bytes("/", "utf16"):
+        elif msg.decode("utf16")[:1] == "/":
             client.send(bytes("chatbyeren: fatal: command not found", "utf16"))
         else:
             dt=datetime.datetime.now().strftime("%H:%M")
