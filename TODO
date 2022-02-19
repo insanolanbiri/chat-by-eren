@@ -1,18 +1,9 @@
-!Banlanınca çöküyor (false warning çıktı :))
+!Banlanınca client tarafı çöküyor
 
-***Ayrılınca hata veriyor***
+Try: *; except: pass saçmalıkları
 
-ign:Ekle: Çok satırlı (gerek yok)
+reis ara sıra kayıyor
 
-!Çok yazınca çöküyor (onaylanmadı)
+mesajlarda blacklist
 
-****Try; except: pass saçmalıkları
-
-!Çok karakterliyazmanın engellenmesi
-
-!reis
-ign:txt blacklist
-
-!kullanıcı adı blacklist (+bkz 31)
-
-impsb:Pythonanywhere
+pythonanywhere (imkansız)

@@ -21,21 +21,21 @@ def welcomeToTurkey(client,name):
     welcome=(f"{NAME}'e hoşgeldin {name}",
             "UYARI: BU CHAT 7/24 REİS TARAFINDAN İNCELENMEKTEDİR",
             "BAŞINIZA BELA OLACAK YAZILAR YAZMAYIN. UYARILDINIZ!",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⣤⣴⣶⣿⣿⣿⣿⣶⣦⣄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⣰⣿⣿⡿⠛⠉⠉⠉⠉⠄⠄⠙⣧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⢠⣿⣿⡏⠄⠄⠄⠄⠄⠄⠄⠄⠄⢸⡇⠄⠄⠄⠄⠄⠄⠄⠄⠄",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⢸⣿⣿⣧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠸⡿⠄⠄⠄⠄⠄⠄⠄⠄⠄     reis",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⢸⣿⣿⢿⣤⠆⢵⡆⠄⢒⠒⠂⠄⠄⠃⠄⠄⠄⠄⠄⠄⠄⠄⠄ <-- of",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠈⢿⣿⡌⠄⠄⣸⡃⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄     turkey",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄ r",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⣤⣴⣶⣿⣿⣿⣿⣶⣦⣄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄ e",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⣰⣿⣿⡿⠛⠉⠉⠉⠉⠄⠄⠙⣧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄ i",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⢠⣿⣿⡏⠄⠄⠄⠄⠄⠄⠄⠄⠄⢸⡇⠄⠄⠄⠄⠄⠄⠄⠄⠄ s",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⢸⣿⣿⣧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠸⡿⠄⠄⠄⠄⠄⠄⠄⠄⠄",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⢸⣿⣿⢿⣤⠆⢵⡆⠄⢒⠒⠂⠄⠄⠃⠄⠄⠄⠄⠄⠄⠄⠄⠄ o",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠈⢿⣿⡌⠄⠄⣸⡃⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄ f",
             "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠘⢿⣿⢀⢘⠻⢧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⢻⡀⠸⣿⡃⠄⠚⠁⠄⠄⢀⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣠⡔⣿⣷⡀⠄⠄⠄⠄⠄⠄⣸⣿⣶⣤⣄⣀⠄⠄⠄⠄⠄",
-            "⠄⠄⠄⠄⢀⣀⣤⣶⣾⣿⣿⣇⠙⢿⣿⠒⠒⠄⠄⠄⢀⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⣄",
-            "⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⠛⠄⠄⠈⣀⣀⠄⠄⠄⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
-            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠄⠄⢸⣿⣿⡷⠂⢀⣿⣿⣿⣹⣿⣿⣿⣿⣿⣿⣿⣿",
-            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠄⠄⣸⣿⣿⡇⠄⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
-            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠄⠄⣿⣿⣿⡇⠄⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⢻⡀⠸⣿⡃⠄⠚⠁⠄⠄⢀⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄ t",
+            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣠⡔⣿⣷⡀⠄⠄⠄⠄⠄⠄⣸⣿⣶⣤⣄⣀⠄⠄⠄⠄⠄ ü",
+            "⠄⠄⠄⠄⢀⣀⣤⣶⣾⣿⣿⣇⠙⢿⣿⠒⠒⠄⠄⠄⢀⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⣄ r",
+            "⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⠛⠄⠄⠈⣀⣀⠄⠄⠄⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ k",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠄⠄⢸⣿⣿⡷⠂⢀⣿⣿⣿⣹⣿⣿⣿⣿⣿⣿⣿⣿ i",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠄⠄⣸⣿⣿⡇⠄⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ y",
+            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠄⠄⣿⣿⣿⡇⠄⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ e",
             "reis tarafından uyarıldın dostum")
     time.sleep(0.1)
     for line in welcome:
@@ -61,11 +61,9 @@ def handle(client):
     if name in banned_list:
         client.send(bytes("banlanmışsın dostum", "utf16"))
         client.close()
-        return None
     if name in rev_clients:
         client.send(bytes("bu kullanıcı adı alınmış, başka bir tane dene", "utf16"))
         client.close()
-        return None
     if ("31" in name) or check31(name) or any(kelime in name.lower() for kelime in blacklist):
         client.send(bytes("hay senin gireceğin kullanıcı adını .......", "utf16"))
         time.sleep(0.1)
@@ -77,8 +75,7 @@ def handle(client):
                 name = f"CokKomikBirArkadas{i}"
                 break
     welcomeToTurkey(client,name)
-    msg = f"{name} bağlandı"
-    broadcast(bytes(msg, 'utf16'))
+    broadcast(bytes(f"{name} bağlandı", 'utf16'))
     print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) bağlandı")
     clients[client] = name
     while True:
@@ -90,7 +87,14 @@ def handle(client):
             except: pass
             broadcast(bytes(f"{name} bağlantısı kesildi",'utf16'))
             return None
-        if name in banned_list:
+        if msg.decode("utf16") == "exit":
+            print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) ayrıldı")
+            del clients[client]
+            client.send(bytes("ayrıldın dostum", "utf16"))
+            client.close()
+            broadcast(bytes(f"{name} ayrıldı",'utf16'))
+            return None
+        elif name in banned_list:
             del clients[client]
             client.send(bytes("banlandın dostum", "utf16"))
             client.close()
@@ -151,7 +155,7 @@ def handle(client):
             broadcast(msg, f"{dt}: {name}: ")
 
 def broadcast(msg,prefix = ""):
-    for client in clients:
+    for client in dict(clients):
         try: client.send(bytes(prefix,'utf16')+msg)
         except: del clients[client]
 

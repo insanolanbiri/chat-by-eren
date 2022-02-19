@@ -14,7 +14,7 @@ def receive():
             msg = clientSocket.recv(BUFFSIZE).decode('utf16')
             msgList.insert(tkinter.END,msg)
             msgList.yview(END)
-        except: sys.exit(1)
+        except: close()
 
 def send(event=None):
     msg = myMsg.get()
@@ -29,8 +29,9 @@ def send(event=None):
         except: close()
 
 def close(event=None):
-    try: clientSocket.close()
-    finally: sys.exit(1)
+    try:
+        clientSocket.send(bytes("exit","utf16")) 
+    finally: sys.exit(0)
 
 if __name__ == '__main__':
     top = tkinter.Tk()
@@ -56,8 +57,6 @@ if __name__ == '__main__':
     entryField.bind("<Return>", send)
     entryField.pack()
     sendButton= tkinter.Button(top,font=30, text="yolla", width=8, height=4,bd=0, bg="#FFBF00", activebackground="#FACC2E", command=send)
-    # sendButton= tkinter.Button(top,font=30, text="Send", width="12", height=5,  bd=0, bg="#FFBF00", activebackground="#FACC2E", command=send)
-    
     
     scrollbar.place(x=540,y=6,height=545)
     entryField.place(x=118, y=555, height=90, width=425)
@@ -75,7 +74,7 @@ if __name__ == '__main__':
             else: raise ValueError
         except ValueError:
             print("\n\n\ttek yapman gereken klavyedeki lanet olası sayıya basmak gerizekalı\n")
-            exit(1)
+            sys.exit(1)
 
     ADDR = (HOST, PORT)
     clientSocket = socket(AF_INET, SOCK_STREAM)
