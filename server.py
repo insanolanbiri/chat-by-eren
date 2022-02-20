@@ -1,10 +1,10 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
-import datetime, time
+import datetime, time, chat_aliases
 
 HOST = "0.0.0.0"
 PORT = 5544
-BUFFSIZE = 1024
+BUFFSIZE = 4096
 NAME="Chat by Eren"
 blacklist = [line.strip() for line in open("blacklist.txt", 'r')]
 
@@ -21,26 +21,12 @@ def welcomeToTurkey(client,name):
     welcome=(f"{NAME}'e hoşgeldin {name}",
             "UYARI: BU CHAT 7/24 REİS TARAFINDAN İNCELENMEKTEDİR",
             "BAŞINIZA BELA OLACAK YAZILAR YAZMAYIN. UYARILDINIZ!",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄ r",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⢀⣤⣴⣶⣿⣿⣿⣿⣶⣦⣄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄ e",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⣰⣿⣿⡿⠛⠉⠉⠉⠉⠄⠄⠙⣧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄ i",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⢠⣿⣿⡏⠄⠄⠄⠄⠄⠄⠄⠄⠄⢸⡇⠄⠄⠄⠄⠄⠄⠄⠄⠄ s",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⢸⣿⣿⣧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠸⡿⠄⠄⠄⠄⠄⠄⠄⠄⠄",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⢸⣿⣿⢿⣤⠆⢵⡆⠄⢒⠒⠂⠄⠄⠃⠄⠄⠄⠄⠄⠄⠄⠄⠄ o",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠈⢿⣿⡌⠄⠄⣸⡃⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄ f",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠘⢿⣿⢀⢘⠻⢧⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⠈⢻⡀⠸⣿⡃⠄⠚⠁⠄⠄⢀⡀⠄⠄⠄⠄⠄⠄⠄⠄⠄ t",
-            "⠄⠄⠄⠄⠄⠄⠄⠄⠄⠄⣠⡔⣿⣷⡀⠄⠄⠄⠄⠄⠄⣸⣿⣶⣤⣄⣀⠄⠄⠄⠄⠄ ü",
-            "⠄⠄⠄⠄⢀⣀⣤⣶⣾⣿⣿⣇⠙⢿⣿⠒⠒⠄⠄⠄⢀⣿⣿⣿⣿⣿⣿⣿⣷⣶⣤⣄ r",
-            "⣀⣤⣶⣾⣿⣿⣿⣿⣿⣿⣿⠛⠄⠄⠈⣀⣀⠄⠄⠄⢸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ k",
-            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠄⠄⢸⣿⣿⡷⠂⢀⣿⣿⣿⣹⣿⣿⣿⣿⣿⣿⣿⣿ i",
-            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡇⠄⠄⣸⣿⣿⡇⠄⣸⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ y",
-            "⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⠄⠄⣿⣿⣿⡇⠄⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿ e",
+            chat_aliases.aliases["/reis"],
             "reis tarafından uyarıldın dostum")
     time.sleep(0.1)
     for line in welcome:
         client.send(bytes(line, "utf16"))
-        time.sleep(0.12)
+        time.sleep(0.15)
 
 def check31(text):
     try:
@@ -69,9 +55,7 @@ def handle(client):
         time.sleep(0.1)
         client.send(bytes("aklını ....... bu mu seni mükemmel tanımlıyor aq", "utf16"))
         for i in range(1,50):
-            if f"CokKomikBirArkadas{i}" in rev_clients:
-                continue
-            else:
+            if f"CokKomikBirArkadas{i}" not in rev_clients:
                 name = f"CokKomikBirArkadas{i}"
                 break
     welcomeToTurkey(client,name)
@@ -90,8 +74,6 @@ def handle(client):
         if msg.decode("utf16") == "exit":
             print(f"{addresses[client][0]}:{addresses[client][1]} ({name}) ayrıldı")
             del clients[client]
-            client.send(bytes("ayrıldın dostum", "utf16"))
-            client.close()
             broadcast(bytes(f"{name} ayrıldı",'utf16'))
             return None
         elif name in banned_list:
@@ -148,6 +130,13 @@ def handle(client):
                 broadcast(bytes(f"{usertounmute} kişisi {name} tarafından un-susturuldu", "utf16"))
             else:
                 client.send(bytes("öyle biri yok!?", "utf16"))
+        elif msg.decode("utf16") in chat_aliases.aliases:
+            real_msg=chat_aliases.aliases[msg.decode("utf16")]
+            dt=datetime.datetime.now().strftime("%H:%M")
+            broadcast(bytes(real_msg,'utf16'), f"{dt}: {name}: ")
+        elif msg.decode("utf16") == "/help":
+            real_msg=chat_aliases.help
+            client.send(bytes(real_msg,'utf16'))            
         elif msg.decode("utf16")[:1] == "/":
             client.send(bytes("chatbyeren: fatal: command not found", "utf16"))
         else:

@@ -1,19 +1,22 @@
 from socket import AF_INET, socket, SOCK_STREAM
 from threading import Thread
-import tkinter, sys
+import tkinter, sys, os
 from tkinter.constants import DISABLED, END, FALSE
 
 
 PORT = 5544
-BUFFSIZE = 1024
+BUFFSIZE = 4096
 NAME="Chat by Eren"
 
 def receive():
     while True:
         try:
             msg = clientSocket.recv(BUFFSIZE).decode('utf16')
-            msgList.insert(tkinter.END,msg)
-            msgList.yview(END)
+            msg=msg.replace(u"\uFEFF","")
+            for line in msg.split("\n"):
+                if line != "":
+                    msgList.insert(tkinter.END,line)
+                    msgList.yview(END)
         except: close()
 
 def send(event=None):
@@ -31,7 +34,7 @@ def send(event=None):
 def close(event=None):
     try:
         clientSocket.send(bytes("exit","utf16")) 
-    finally: sys.exit(0)
+    finally: os._exit(0)
 
 if __name__ == '__main__':
     top = tkinter.Tk()
@@ -42,7 +45,7 @@ if __name__ == '__main__':
     messageFrame = tkinter.Frame(top)
     scrollbar = tkinter.Scrollbar(messageFrame)
 
-    msgList = tkinter.Listbox(top,bd=0, bg="white", height="8", width="55", font=("Arial", 11), yscrollcommand=scrollbar.set)
+    msgList = tkinter.Listbox(top,bd=0, bg="white", height="8", width="55", font='TkFixedFont', yscrollcommand=scrollbar.set)
     scrollbar.pack(side=tkinter.RIGHT, fill=tkinter.Y,)
     msgList['yscrollcommand'] = scrollbar.set
     msgList.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
@@ -53,7 +56,7 @@ if __name__ == '__main__':
     myMsg = tkinter.StringVar()
     myMsg.set("")
 
-    entryField = tkinter.Entry(top,textvariable = myMsg, width=1, bg="white")
+    entryField = tkinter.Entry(top,textvariable = myMsg, width=1, bg="white", font='TkFixedFont')
     entryField.bind("<Return>", send)
     entryField.pack()
     sendButton= tkinter.Button(top,font=30, text="yolla", width=8, height=4,bd=0, bg="#FFBF00", activebackground="#FACC2E", command=send)
