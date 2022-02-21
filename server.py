@@ -23,6 +23,7 @@ muted_list=[]
 def welcomeToTurkey(client,name):
     global NAME
     welcome=(f"{NAME}'e hoşgeldin {name}",
+            chat_aliases.aliases["/chatbyeren"],
             "UYARI: BU CHAT 7/24 REİS TARAFINDAN İNCELENMEKTEDİR",
             "BAŞINIZA BELA OLACAK YAZILAR YAZMAYIN. UYARILDINIZ!",
             chat_aliases.aliases["/reis"],
