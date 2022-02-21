@@ -1,10 +1,14 @@
-from socket import AF_INET, socket, SOCK_STREAM
+import datetime
+import time
+from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
-import datetime, time, chat_aliases
+
+import chat_aliases
 
 HOST = "0.0.0.0"
 PORT = 5544
 BUFFSIZE = 4096
+MAX_CONN=50
 NAME="Chat by Eren"
 blacklist = [line.strip() for line in open("blacklist.txt", 'r')]
 
@@ -54,7 +58,7 @@ def handle(client):
         client.send(bytes("hay senin gireceğin kullanıcı adını .......", "utf16"))
         time.sleep(0.1)
         client.send(bytes("aklını ....... bu mu seni mükemmel tanımlıyor aq", "utf16"))
-        for i in range(1,50):
+        for i in range(1,MAX_CONN):
             if f"CokKomikBirArkadas{i}" not in rev_clients:
                 name = f"CokKomikBirArkadas{i}"
                 break
@@ -150,7 +154,7 @@ def broadcast(msg,prefix = ""):
 
 
 if __name__ == "__main__":
-    SERVER.listen(30)
+    SERVER.listen(MAX_CONN)
     print(f"{NAME}: sunucu çalışır durumda\n")
     ACCEPT_THREAD = Thread(target=accept)
     ACCEPT_THREAD.start()
