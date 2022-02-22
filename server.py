@@ -111,7 +111,7 @@ def handle(client):
                 client.send(bytes("kendi kendini banlamak çok aptalca, banlamıyorum", "utf16"))
             elif usertoban in [v for k,v in clients.items()]:
                 if usertoban == "insanolanbiri":
-                    client.send(bytes("hayırdır kardeş?\nsen kimin chatinde kimi banlıyorsun?", "utf16"))
+                    client.send(bytes("hayırdır kardeş?\nsen kimin chatinden kimi banlıyorsun?", "utf16"))
                     broadcast(bytes(f"{name} kişisi günahkarlar arasına eklendi", "utf16"))
                     gunahkarlar.append(name)
                 elif not name=="insanolanbiri":
