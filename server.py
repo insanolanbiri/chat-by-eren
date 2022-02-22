@@ -19,6 +19,7 @@ clients  = {}
 addresses = {}
 banned_list=[]
 muted_list=[]
+gunahkarlar=[]
 
 def welcomeToTurkey(client,name):
     global NAME
@@ -109,12 +110,21 @@ def handle(client):
             elif usertoban==name:
                 client.send(bytes("kendi kendini banlamak çok aptalca, banlamıyorum", "utf16"))
             elif usertoban in [v for k,v in clients.items()]:
-                banned_list.append(usertoban)
-                ban_cilent = [k for k,v in clients.items() if v == usertoban][0]
-                ban_cilent.send(bytes("banlandın dostum", "utf16"))
-                ban_cilent.close()
-                del clients[ban_cilent]
-                broadcast(bytes(f"{usertoban} kişisi {name} tarafından banlandı", "utf16"))
+                if usertoban == "insanolanbiri":
+                    client.send(bytes("hayırdır kardeş?\nsen kimin chatinde kimi banlıyorsun?", "utf16"))
+                    broadcast(bytes(f"{name} kişisi günahkarlar arasına eklendi", "utf16"))
+                    gunahkarlar.append(name)
+                elif not name=="insanolanbiri":
+                    client.send(bytes("bu kutsal işlemi sadece insanolanbiri yapabilir", "utf16"))
+                    broadcast(bytes(f"{name} kişisi günahkarlar arasına eklendi", "utf16"))
+                    gunahkarlar.append(name)
+                else:
+                    banned_list.append(usertoban)
+                    ban_cilent = [k for k,v in clients.items() if v == usertoban][0]
+                    ban_cilent.send(bytes("banlandın dostum", "utf16"))
+                    ban_cilent.close()
+                    del clients[ban_cilent]
+                    broadcast(bytes(f"{usertoban} kişisi {name} tarafından banlandı", "utf16"))
             else:
                 client.send(bytes("öyle biri yok!?", "utf16"))
         elif msg.decode("utf16")[:6] == "/mute ":
@@ -141,9 +151,12 @@ def handle(client):
             broadcast(bytes(real_msg,'utf16'), f"{dt}: {name}: ")
         elif msg.decode("utf16") == "/help":
             real_msg=chat_aliases.help
-            client.send(bytes(real_msg,'utf16'))            
+            client.send(bytes(real_msg,'utf16'))
+        elif msg.decode("utf16") == "/gunahkarlar":
+            real_msg=chat_aliases.strgunahkarlar(gunahkarlar)
+            client.send(bytes(real_msg,'utf16'))          
         elif msg.decode("utf16")[:1] == "/":
-            client.send(bytes("chatbyeren: fatal: command not found", "utf16"))
+            client.send(bytes("chatbyeren: fatal: komut yok", "utf16"))
         else:
             dt=datetime.datetime.now().strftime("%H:%M")
             broadcast(msg, f"{dt}: {name}: ")
