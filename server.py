@@ -111,7 +111,7 @@ def handle(client):
                 client.send(bytes("kendi kendini banlamak çok aptalca, banlamıyorum", "utf16"))
             elif usertoban in [v for k,v in clients.items()]:
                 if usertoban == "insanolanbiri":
-                    client.send(bytes("hayırdır kardeş?\nsen kimin chatinden kimi banlıyorsun?", "utf16"))
+                    client.send(bytes("hayırdır kardeş?\nsen kimin chatinden kimi banlıyorsun?\n ", "utf16"))
                     broadcast(bytes(f"{name} kişisi günahkarlar arasına eklendi", "utf16"))
                     gunahkarlar.append(name)
                 elif not name=="insanolanbiri":
@@ -154,7 +154,14 @@ def handle(client):
             client.send(bytes(real_msg,'utf16'))
         elif msg.decode("utf16") == "/gunahkarlar":
             real_msg=chat_aliases.strgunahkarlar(gunahkarlar)
-            client.send(bytes(real_msg,'utf16'))          
+            client.send(bytes(real_msg,'utf16'))
+        elif msg.decode("utf16") == "/users":
+            ds = [clients,addresses]
+            d = {}
+            for k in clients.keys():
+                d[k] = tuple(d[k] for d in ds)
+            real_msg=chat_aliases.strkullanıcılar(d.values())
+            broadcast(bytes(real_msg,'utf16'))
         elif msg.decode("utf16")[:1] == "/":
             client.send(bytes("chatbyeren: fatal: komut yok", "utf16"))
         else:
