@@ -1,8 +1,9 @@
-from socket import AF_INET, socket, SOCK_STREAM
+import os
+import sys
+import tkinter
+from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
-import tkinter, sys, os
 from tkinter.constants import DISABLED, END, FALSE
-
 
 PORT = 5544
 BUFFSIZE = 4096

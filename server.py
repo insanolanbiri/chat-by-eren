@@ -63,7 +63,7 @@ def accept():
     while True:
         client, clientAddress = SERVER.accept()
         send(client,"seni *mükemmel* tanımlayan bir kullanıcı adı seçip yolla")
-        clients[client] = [None,None,False]
+        clients[client] = [None,None,False,[None,None,None]]
         clients[client][0] = clientAddress
         Thread(target=handle, args=(client,)).start()
 
@@ -92,6 +92,8 @@ def handle(client):
             msg = client.recv(BUFFSIZE)
             dmsg=msg.decode("utf16")
             dt=datetime.datetime.now().strftime("%H:%M")
+            (clients[client][3]).append(dmsg)
+            (clients[client][3]).pop(0)
         except:
             print(f"{clients[client][0][0]}:{clients[client][0][1]} ({name}) bağlantısı kesildi")
             try: del clients[client]
@@ -99,20 +101,25 @@ def handle(client):
             broadcast(f"{name} bağlantısı kesildi")
             return None
 
-        if dmsg == "exit":
+        if name in banned_list:
+            send("banlandın dostum")
+            client.close()
+            return None
+
+        elif dmsg == "exit":
             print(f"{clients[client][0][0]}:{clients[client][0][1]} ({name}) ayrıldı")
             del clients[client]
             broadcast(f"{name} ayrıldı")
             return None
 
-        elif name in banned_list:
-            del clients[client]
-            send("banlandın dostum")
-            client.close()
-            return None
+
 
         elif name in muted_list:
             botcast("susturuldun dostum, mesajların iletilmiyor",client)
+
+        elif clients[client][3][0]==clients[client][3][1]==clients[client][3][2] and not isAdmin(name):
+            muted_list.append(name)
+            botcast(f"{name} oto-susturuldu")
 
         elif dmsg[:6] == "/kick ":
             usertokick = dmsg[6:]
@@ -166,7 +173,7 @@ def handle(client):
             usertounmute = dmsg[8:]
             if not isAdmin(name):
                 botcast("bu komut seni aşar canım",client)
-            elif not isUserIn(usertomute):
+            elif not isUserIn(usertounmute):
                 botcast("öyle biri yok!?",client)
             elif usertounmute not in muted_list:
                botcast("susturulmamış ki unsusturayım!?",client)
@@ -188,7 +195,7 @@ def handle(client):
             botcast(chat_aliases.strkullanıcılar(clients.values()))
 
         elif dmsg[:1] == "/":
-            botcast("komut yok",client)
+            botcast("yok ki öyle bi komut",client)
 
         elif any(x in dmsg for x in blacklist) and not isAdmin(name):
             muted_list.append(name)
