@@ -4,7 +4,7 @@ import tkinter, sys, os
 from tkinter.constants import DISABLED, END, FALSE
 
 
-PORT = 5545
+PORT = 5544
 BUFFSIZE = 4096
 NAME="Chat by Eren"
 

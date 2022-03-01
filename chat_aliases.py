@@ -122,7 +122,7 @@ aliases={
 
 "/hakanexclusive":
 """
-""",
+/*eklenecek*/""",
 
 "/fizikkitabı":
 """
@@ -203,12 +203,10 @@ aliases={
 
 straliases="\n".join(list(aliases.keys()))
 help=f"""
-\n 
 kullanılabilecek komutlar
 =========================
 {straliases}
 /users
-\n 
 /ban <k. adı>    (admin)
 /kick <k. adı>   (admin)
 /mute <k. adı>   (admin)
@@ -224,10 +222,9 @@ def strkullanıcılar(tuple):
       text+=f"{a}     {ip:^13s}   {name:^17s}\n"
 
    return f"""
-\n 
 chatteki kullanıcılar
 =====================
-\n 
+ 
 a b     ip adresi       kullanıcı adı
 - -   -------------   -----------------
 * *         -           insanolanbot

@@ -5,7 +5,7 @@ from threading import Thread
 import chat_aliases
 
 HOST = "0.0.0.0"
-PORT = 5545
+PORT = 5544
 BUFFSIZE = 4096
 MAX_CONN=50
 NAME="Chat by Eren"
@@ -179,7 +179,7 @@ def handle(client):
             broadcast(chat_aliases.aliases[dmsg], f"{dt}: {name}: ")
 
         elif dmsg == "/help":
-            send(client,chat_aliases.help)
+            botcast(chat_aliases.help,client)
 
         elif dmsg == "/users":
             botcast(chat_aliases.strkullanıcılar(clients.values()),client)
