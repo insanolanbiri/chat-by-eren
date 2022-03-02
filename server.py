@@ -207,10 +207,10 @@ def handle(client):
             botcast(chat_aliases.help,client)
 
         elif dmsg == "/users":
-            botcast(chat_aliases.strkullanıcılar(clients.values()),client)
+            botcast(chat_aliases.strkullanicilar(clients.values()),client)
 
         elif dmsg == "/usersbroadcast":
-            botcast(chat_aliases.strkullanıcılar(clients.values()))
+            botcast(chat_aliases.strkullanicilar(clients.values()))
 
         elif dmsg[:1] == "/":
             botcast("yok ki öyle bi komut",client)

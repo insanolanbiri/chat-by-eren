@@ -335,7 +335,7 @@ kullanılabilecek komutlar
 """
 
 
-def strkullanıcılar(tuple):
+def strkullanicilar(tuple):
    text=""
    for (ip,port),name,isAdmin,lastmsgs,lasttimes in tuple:
       if isAdmin: a="*"
