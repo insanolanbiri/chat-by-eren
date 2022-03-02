@@ -6,7 +6,7 @@ from threading import Thread
 from tkinter.constants import DISABLED, END, FALSE
 
 PORT = 5544
-BUFFSIZE = 4096
+BUFFSIZE = 16384
 NAME="Chat by Eren"
 
 def receive():
