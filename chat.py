@@ -45,7 +45,7 @@ def close(event=None):
 
 if __name__ == "__main__":
     top = tkinter.Tk()
-    top.configure(bg="lightgray")
+    top.configure(bg="#6f24f1")
     top.title(NAME)
     top.geometry("550x650")
     top.resizable(width=FALSE, height=FALSE)
@@ -55,10 +55,12 @@ if __name__ == "__main__":
     msgList = tkinter.Listbox(
         top,
         bd=0,
-        bg="white",
+        bg="#36383f",
         height="8",
         width="55",
         font="TkFixedFont",
+        foreground="#ccd1d9",
+        highlightbackground="#36383f",
         yscrollcommand=scrollbar.set,
     )
     scrollbar.pack(
@@ -68,14 +70,19 @@ if __name__ == "__main__":
     msgList["yscrollcommand"] = scrollbar.set
     msgList.pack(side=tkinter.LEFT, fill=tkinter.BOTH)
     msgList.pack(fill=tkinter.X)
-    msgList.configure(bg="lightblue")
     messageFrame.pack()
 
     myMsg = tkinter.StringVar()
     myMsg.set("")
 
     entryField = tkinter.Entry(
-        top, textvariable=myMsg, width=1, bg="white", font="TkFixedFont"
+        top,
+        textvariable=myMsg,
+        width=1,
+        bg="#40434b",
+        font="TkFixedFont",
+        foreground="#ccd1d9",
+        highlightbackground="#40434b",
     )
     entryField.bind("<Return>", send)
     entryField.pack()
@@ -86,40 +93,38 @@ if __name__ == "__main__":
         width=8,
         height=4,
         bd=0,
-        bg="#FFBF00",
-        activebackground="#FACC2E",
+        bg="#b9bbbe",
+        activebackground="#dcddde",
         command=send,
     )
 
     scrollbar.place(x=540, y=6, height=545)
-    entryField.place(x=118, y=555, height=90, width=425)
-    sendButton.place(x=6, y=555, height=90)
+    entryField.place(x=6, y=555, height=90, width=425)
+    sendButton.place(x=436, y=555, height=90)
     msgList.place(x=6, y=6, height=545, width=540)
 
     top.protocol("WM_DELETE_WINDOW", close)
-    HOST = ""
-    while not HOST:
-        try:
-            inp = int(
-                input(
-                    "sunucu seç:\n 1) BT4 (exclusive bilgisayarımız)\n 2) localhost\n 3) başka bir sunucu\n\nseçtiğin sunucunun numarası: "
-                )
+    try:
+        inp = int(
+            input(
+                "sunucu seç:\n 1) BT4 (exclusive bilgisayarımız)\n 2) localhost\n 3) başka bir sunucu\n\nseçtiğin sunucunun numarası: "
             )
-            if inp == 1:
-                HOST = "BT4"
-            elif inp == 2:
-                HOST = "localhost"
-            elif inp == 3:
-                HOST = input(
-                    "\n\nBT4'ü (kutsal bilgisayarımızı) kullanmadığına üzüldüm doğrusu.\n\nher neyse, hangi sunucu: "
-                )
-            else:
-                raise ValueError
-        except ValueError:
-            print(
-                "\n\n\ttek yapman gereken klavyedeki lanet olası sayıya basmak gerizekalı\n"
+        )
+        if inp == 1:
+            HOST = "BT4"
+        elif inp == 2:
+            HOST = "localhost"
+        elif inp == 3:
+            HOST = input(
+                "\n\nBT4'ü (kutsal bilgisayarımızı) kullanmadığına üzüldüm doğrusu.\n\nher neyse, hangi sunucu: "
             )
-            sys.exit(1)
+        else:
+            raise ValueError
+    except ValueError:
+        print(
+            "\n\n\ttek yapman gereken klavyedeki lanet olası sayıya basmak gerizekalı\n"
+        )
+        sys.exit(1)
 
     ADDR = (HOST, PORT)
     clientSocket = socket(AF_INET, SOCK_STREAM)

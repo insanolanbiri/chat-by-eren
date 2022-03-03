@@ -2,3 +2,4 @@
 .AppleDouble
 ._*
 __pycache__/
+geckodriver.log

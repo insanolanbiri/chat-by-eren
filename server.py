@@ -1,8 +1,9 @@
-import datetime, time
+import time
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
+from datetime import datetime
 
-import chat_aliases
+import chat_aliases, denemefetch
 
 # TODO: insanolanbot class
 # TODO: insanolanbot komutları
@@ -20,24 +21,19 @@ blacklist = [line.strip().lower() for line in open("blacklist.txt", "r")]
 ADDR = (HOST, PORT)
 SERVER = socket(AF_INET, SOCK_STREAM)
 SERVER.bind(ADDR)
-clients = {}
+clist = {}
 banned_list = []
 muted_list = []
-adminstatic = ("insanolanbiri", "insanolanbot", "eren_geri_geldi", "biriolaninsan")
+adminstatic = ("insanolanbiri", "insanolanbot", "eren_geri_geldi", "biriolaninsan","")
 
 
-def welcomeToTurkey(client, name):
-    global NAME
-    welcome = (
-        f"{NAME}'e hoşgeldin {name}, yardım için /help yaz",
-        chat_aliases.aliases["/chatbyeren"],
-        "UYARI: BU CHAT 7/24 REİS TARAFINDAN İNCELENMEKTEDİR",
-        "BAŞINIZA BELA OLACAK YAZILAR YAZMAYIN. UYARILDINIZ!",
-        chat_aliases.aliases["/reis"],
-        "reis tarafından uyarıldın dostum",
-    )
-    msg = "\n".join(welcome)
-    send(client, msg)
+def broadcast(msg, prefix=""):
+    for c in dict(clist):
+        if clist[c][1]:
+            try:
+                c.send(bytes(prefix + msg, "utf16"))
+            except:
+                del clist[c]
 
 
 def check31(text):
@@ -48,27 +44,27 @@ def check31(text):
         return False
 
 
+def welcomeToTurkey(c, name):
+    global NAME
+
+
 def isAdmin(name):
-    return clients[name2client(name)][2]
+    return clist[name2c(name)][2]
 
 
-def name2client(name):
-    return [client for client in dict(clients) if clients[client][1] == name][0]
+def name2c(name):
+    return [c for c in dict(clist) if clist[c][1] == name][0]
 
 
 def isUserIn(name):
-    return name in [v[1] for k, v in clients.items()] + ["insanolanbot"]
+    return name in [v[1] for k, v in clist.items()] + ["insanolanbot"]
 
 
-def encode(msg):
-    return bytes(msg, "utf16")
-
-
-def send(client, msg):
+def send(c, msg):
     try:
-        client.send(encode(msg))
+        c.send(bytes(msg, "utf16"))
     except:
-        del clients[client]
+        del clist[c]
 
 
 def botcast(msg, to=False):
@@ -80,66 +76,81 @@ def botcast(msg, to=False):
 
 def accept():
     while True:
-        client, clientAddress = SERVER.accept()
-        send(client, "seni *mükemmel* tanımlayan bir kullanıcı adı seçip yolla")
-        clients[client] = [
+        c, cAddress = SERVER.accept()
+        send(c, "seni *mükemmel* tanımlayan bir kullanıcı adı seçip yolla")
+        clist[c] = [
             None,
             None,
             False,
             [None, None, None],
-            [datetime.datetime.min, datetime.datetime.min, datetime.datetime.min],
+            [datetime.min, datetime.min, datetime.min],
         ]
-        clients[client][0] = clientAddress
-        Thread(target=handle, args=(client,)).start()
+        clist[c][0] = cAddress
+        Thread(target=handle, args=(c,)).start()
 
 
-def handle(client):
-    name = client.recv(BUFFSIZE).decode("utf16")
+def handle(c):
+    name = c.recv(BUFFSIZE).decode("utf16")
     if name in banned_list:
-        send(client, "banlanmışsın dostum")
-        client.close()
-        del clients[client]
-    if isUserIn(name):
-        send(client, "bu kullanıcı adı alınmış, başka bir tane dene")
-        client.close()
-        del clients[client]
-    if ("31" in name) or check31(name):
-        botcast("k. adına bakılırsa yaşın tutmuyor dostum", client)
-        client.close()
-        del clients[client]
+        send(c, "banlanmışsın dostum")
+        c.close()
+        del clist[c]
         return None
-    if any(kelime in name.lower() for kelime in blacklist):
+    elif isUserIn(name):
+        send(c, "bu kullanıcı adı alınmış, başka bir tane dene")
+        c.close()
+        del clist[c]
+        return None
+    elif ("31" in name) or check31(name):
+        botcast("k. adına bakılırsa yaşın tutmuyor dostum", c)
+        botcast("banlandın dostum", c)
+        c.close()
+        del clist[c]
+        return None
+    elif any(kelime in name.lower() for kelime in blacklist):
         send(
-            client,
-            "hay senin gireceğin kullanıcı adını .......\naklını ....... bu mu seni mükemmel tanımlıyor aq",
+            c,
+            "\n".join(
+                [
+                    "hay senin gireceğin kullanıcı adını .......",
+                    "aklını ....... bu mu seni mükemmel tanımlıyor aq",
+                ]
+            ),
         )
         for i in range(1, MAX_CONN):
             if not isUserIn(f"CokKomikBirArkadas{i}"):
                 name = f"CokKomikBirArkadas{i}"
                 break
-    welcomeToTurkey(client, name)
+    welcome = (
+        f"{NAME}'e hoşgeldin {name}, yardım için /help yaz",
+        chat_aliases.aliases["/chatbyeren"],
+        "UYARI: BU CHAT 7/24 REİS TARAFINDAN İNCELENMEKTEDİR",
+        "BAŞINIZA BELA OLACAK YAZILAR YAZMAYIN. UYARILDINIZ!",
+        chat_aliases.aliases["/reis"],
+        "reis tarafından uyarıldın dostum",
+    )
+    msg = "\n".join(welcome)
+    send(c, msg)
     broadcast(f"{name} bağlandı")
-    print(f"{clients[client][0][0]}:{clients[client][0][1]} ({name}) bağlandı")
-    clients[client][1] = name
+    print(f"{clist[c][0][0]}:{clist[c][0][1]} ({name}) bağlandı")
+    clist[c][1] = name
     if name in adminstatic:
-        clients[client][2] = True
+        clist[c][2] = True
     time.sleep(0.2)
     botcast(f"hoşgeldin {name}!")
     while True:
         try:
-            msg = client.recv(BUFFSIZE)
+            msg = c.recv(BUFFSIZE)
             dmsg = msg.decode("utf16")
-            dt = datetime.datetime.now().strftime("%H:%M")
-            (clients[client][3]).append(dmsg)
-            (clients[client][3]).pop(0)
-            (clients[client][4]).append(datetime.datetime.now())
-            (clients[client][4]).pop(0)
+            dt = datetime.now().strftime("%H:%M")
+            (clist[c][3]).append(dmsg)
+            (clist[c][3]).pop(0)
+            (clist[c][4]).append(datetime.now())
+            (clist[c][4]).pop(0)
         except:
-            print(
-                f"{clients[client][0][0]}:{clients[client][0][1]} ({name}) bağlantısı kesildi"
-            )
+            print(f"{clist[c][0][0]}:{clist[c][0][1]} ({name}) bağlantısı kesildi")
             try:
-                del clients[client]
+                del clist[c]
             except:
                 pass
             broadcast(f"{name} bağlantısı kesildi")
@@ -147,87 +158,83 @@ def handle(client):
 
         if name in banned_list:
             send("banlandın dostum")
-            client.close()
+            c.close()
             return None
 
         elif dmsg == "exit":
-            print(f"{clients[client][0][0]}:{clients[client][0][1]} ({name}) ayrıldı")
-            del clients[client]
+            print(f"{clist[c][0][0]}:{clist[c][0][1]} ({name}) ayrıldı")
+            del clist[c]
             broadcast(f"{name} ayrıldı")
             return None
 
         elif name in muted_list:
-            botcast("susturuldun dostum, mesajların iletilmiyor", client)
+            botcast("susturuldun dostum, mesajların iletilmiyor", c)
 
-        elif clients[client][3][0] == clients[client][3][1] == clients[client][3][
-            2
-        ] and not isAdmin(name):
+        elif clist[c][3][0] == clist[c][3][1] == clist[c][3][2] and not isAdmin(name):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: spam")
 
-        elif (
-            datetime.datetime.now() - clients[client][4][0]
-        ).seconds <= 15 and not isAdmin(name):
+        elif (datetime.now() - clist[c][4][0]).seconds <= 15 and not isAdmin(name):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: spam")
 
-        elif dmsg[:6] == "/kick ":
+        elif dmsg[:5] == "/kick":
             usertokick = dmsg[6:]
             if not isAdmin(name):
-                botcast("bu komut seni aşar canım", client)
+                botcast("bu komut seni aşar canım", c)
             elif usertokick == name:
-                botcast("kendi kendini kicklemek çok aptalca, kicklemiyorum", client)
+                botcast("kendi kendini kicklemek çok aptalca, kicklemiyorum", c)
             elif not isUserIn(usertokick):
-                botcast("öyle biri yok!?", client)
+                botcast("öyle biri yok!?", c)
             else:
                 try:
-                    kick_client = name2client(usertokick)
-                    botcast("kicklendin dostum", kick_client)
-                    kick_client.close()
+                    kick_c = name2c(usertokick)
+                    botcast("kicklendin dostum", kick_c)
+                    kick_c.close()
                 finally:
                     try:
-                        del clients[kick_client]
+                        del clist[kick_c]
                     finally:
                         botcast(f"{usertokick}, {name} tarafından kicklendi")
 
-        elif dmsg[:5] == "/ban ":
+        elif dmsg[:4] == "/ban":
             usertoban = dmsg[5:]
             if not isAdmin(name):
-                botcast("bu komut seni aşar canım", client)
+                botcast("bu komut seni aşar canım", c)
             elif usertoban == name:
-                botcast("kendi kendini banlamak çok aptalca, banlamıyorum", client)
+                botcast("kendi kendini banlamak çok aptalca, banlamıyorum", c)
             elif not isUserIn(usertoban):
-                botcast("öyle biri yok!?", client)
+                botcast("öyle biri yok!?", c)
             else:
                 banned_list.append(usertoban)
-                ban_cilent = name2client(usertoban)
-                botcast("banlandın dostum", ban_cilent)
-                ban_cilent.close()
-                del clients[ban_cilent]
+                ban_c = name2c(usertoban)
+                botcast("banlandın dostum", ban_c)
+                ban_c.close()
+                del clist[ban_c]
                 botcast(f"{usertoban}, {name} tarafından banlandı")
 
-        elif dmsg[:6] == "/mute ":
+        elif dmsg[:5] == "/mute":
             usertomute = dmsg[6:]
             if not isAdmin(name):
-                botcast("bu komut seni aşar canım", client)
+                botcast("bu komut seni aşar canım", c)
             elif usertomute in muted_list:
-                botcast("bu kullanıcı zaten susturulmuş", client)
+                botcast("bu kullanıcı zaten susturulmuş", c)
             elif usertomute == name:
-                botcast("kendi kendini susturmak çok aptalca, susturmuyorum", client)
+                botcast("kendi kendini susturmak çok aptalca, susturmuyorum", c)
             elif not isUserIn(usertomute):
-                botcast("öyle biri yok!?", client)
+                botcast("öyle biri yok!?", c)
             else:
                 muted_list.append(usertomute)
                 botcast(f"{usertomute}, {name} tarafından susturuldu")
 
-        elif dmsg[:8] == "/unmute ":
+        elif dmsg[:7] == "/unmute":
             usertounmute = dmsg[8:]
             if not isAdmin(name):
-                botcast("bu komut seni aşar canım", client)
+                botcast("bu komut seni aşar canım", c)
             elif not isUserIn(usertounmute):
-                botcast("öyle biri yok!?", client)
+                botcast("öyle biri yok!?", c)
             elif usertounmute not in muted_list:
-                botcast("susturulmamış ki unsusturayım!?", client)
+                botcast("susturulmamış ki unsusturayım!?", c)
             else:
                 muted_list.remove(usertounmute)
                 botcast(f"{usertounmute}, {name} tarafından un-susturuldu")
@@ -236,35 +243,55 @@ def handle(client):
             broadcast(chat_aliases.aliases[dmsg], f"{dt}: {name}: ")
 
         elif dmsg == "/help":
-            botcast(chat_aliases.help, client)
+            botcast(chat_aliases.help, c)
 
         elif dmsg == "/users":
-            botcast(chat_aliases.strkullanicilar(clients.values()), client)
+            botcast(chat_aliases.strkullanicilar(clist.values()), c)
 
         elif dmsg == "/usersbroadcast":
-            botcast(chat_aliases.strkullanicilar(clients.values()))
+            botcast(chat_aliases.strkullanicilar(clist.values()))
+        
+        elif dmsg[:7]=="/deneme":
+            broadcast(dmsg, f"{dt}: {name}: ")
+            try:
+                no=int(dmsg[8:])
+            except:
+                botcast("böyle numara olmaz olsun")
+                continue
+            ad=denemefetch.find_ad_from_no(no)
+            if ad==-1:
+                botcast("bana doğru düzgün numara ver")
+            else:
+                try:
+                    sonuc=denemefetch.getSonuc(ad,no,denemefetch.url,denemefetch.puanbosluk)
+                    t="\nsonuçlar\n========\n"
+                    for key, value in sonuc.items():
+                        t+=f" \n{key:16} {value}"
+                    botcast(t)
+                except:
+                    botcast("bir şey oldu, sonucu bulamadım")
 
         elif dmsg[:1] == "/":
-            botcast("yok ki öyle bi komut", client)
+            botcast("yok ki öyle bi komut", c)
 
         elif dmsg[:1] == "@":
             usertoping = dmsg[1:]
             if not isUserIn(usertoping):
                 botcast("öyle biri yok!?")
             elif usertoping == name:
-                botcast("kendi kendini pinglemek çok aptalca, pinglemiyorum", client)
+                botcast("kendi kendini pinglemek çok aptalca, pinglemiyorum", c)
             else:
                 broadcast(dmsg, f"{dt}: {name}: ")
                 if usertoping == "insanolanbot":
                     botcast("noldu?")
                 else:
-                    botcast(f"{name} seni soruyor dostum", name2client(usertoping))
+                    botcast(f"{name} seni soruyor dostum", name2c(usertoping))
 
         elif (("31" in dmsg) or check31(dmsg)) and not isAdmin(name):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: yaşı tutmuyor")
 
-        elif any(x in dmsg.lower() for x in blacklist) and not isAdmin(name):
+        elif any(x in dmsg.lower().split() for x in blacklist) and not isAdmin(name):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: yasaklı kelime")
 
@@ -273,15 +300,6 @@ def handle(client):
             if "sa" in dmsg.lower().split():
                 time.sleep(0.2)
                 botcast("as")
-
-
-def broadcast(msg, prefix=""):
-    for client in dict(clients):
-        if clients[client][1]:
-            try:
-                client.send(encode(prefix + msg))
-            except:
-                del clients[client]
 
 
 if __name__ == "__main__":
