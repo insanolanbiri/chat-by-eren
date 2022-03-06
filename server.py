@@ -1,4 +1,4 @@
-import time
+import time, hashlib, random
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
 from datetime import datetime
@@ -9,6 +9,7 @@ import chat_aliases, denemefetch
 # TODO: insanolanbot komutları
 # TODO: try except pass saçmalığı
 # TODO: admin yönetim
+# TODO: espri format
 
 HOST = "0.0.0.0"
 PORT = 5544
@@ -24,7 +25,7 @@ SERVER.bind(ADDR)
 clist = {}
 banned_list = []
 muted_list = []
-adminstatic = ("insanolanbiri", "insanolanbot", "eren_geri_geldi", "biriolaninsan","")
+adminstatic = ("insanolanbiri", "insanolanbot", "eren_geri_geldi", "biriolaninsan", "")
 
 
 def broadcast(msg, prefix=""):
@@ -77,13 +78,22 @@ def botcast(msg, to=False):
 def accept():
     while True:
         c, cAddress = SERVER.accept()
-        send(c, "seni *mükemmel* tanımlayan bir kullanıcı adı seçip yolla")
+        send(
+            c,
+            "\n".join(
+                [
+                    chat_aliases.aliases["/chatbyeren"],
+                    "seni *mükemmel* tanımlayan bir kullanıcı adı seçip yolla",
+                ]
+            ),
+        )
+
         clist[c] = [
-            None,
-            None,
-            False,
-            [None, None, None],
-            [datetime.min, datetime.min, datetime.min],
+            None,  # ip,port
+            None,  # username
+            False,  # is an admin
+            [None, None, None],  # last 3 messages
+            [datetime.min, datetime.min, datetime.min],  # dates of last 3 messages
         ]
         clist[c][0] = cAddress
         Thread(target=handle, args=(c,)).start()
@@ -91,19 +101,41 @@ def accept():
 
 def handle(c):
     name = c.recv(BUFFSIZE).decode("utf16")
+    if name == "insanolanbiri":
+        send(
+            c,
+            "\n".join(
+                [
+                    "taam taam inandım",
+                    "kesin insanolanbiri'sin sen",
+                    "kimi kandırıyon sen?",
+                ]
+            ),
+        )
+        botcast("banlandın dostum", c)  # aslında banlanmadı sadece korkutuyoruz
+        c.close()
+        del clist[c]
+        return None
+    if (
+        hashlib.sha256(bytes(name, "utf16")).hexdigest()
+        == "a8cd9e8bac481f76fc0bf19bd51276e1e7e47f43880267bc3a21fad20639c5f1"
+    ):  # hakan ne gerek vardı dimi buna
+        name = "insanolanbiri"
     if name in banned_list:
         send(c, "banlanmışsın dostum")
         c.close()
         del clist[c]
         return None
     elif isUserIn(name):
-        send(c, "bu kullanıcı adı alınmış, başka bir tane dene")
+        send(
+            c, "bu kullanıcı adı alınmış, başka bir tane dene\nbağlantı sonlandırılıyor"
+        )
         c.close()
         del clist[c]
         return None
     elif ("31" in name) or check31(name):
         botcast("k. adına bakılırsa yaşın tutmuyor dostum", c)
-        botcast("banlandın dostum", c)
+        botcast("banlandın dostum", c)  # aslında banlanmadı sadece korkutuyoruz
         c.close()
         del clist[c]
         return None
@@ -123,7 +155,6 @@ def handle(c):
                 break
     welcome = (
         f"{NAME}'e hoşgeldin {name}, yardım için /help yaz",
-        chat_aliases.aliases["/chatbyeren"],
         "UYARI: BU CHAT 7/24 REİS TARAFINDAN İNCELENMEKTEDİR",
         "BAŞINIZA BELA OLACAK YAZILAR YAZMAYIN. UYARILDINIZ!",
         chat_aliases.aliases["/reis"],
@@ -250,23 +281,31 @@ def handle(c):
 
         elif dmsg == "/usersbroadcast":
             botcast(chat_aliases.strkullanicilar(clist.values()))
-        
-        elif dmsg[:7]=="/deneme":
+
+        elif dmsg == "/espri":
             broadcast(dmsg, f"{dt}: {name}: ")
+            time.sleep(0.2)
+            botcast(random.choice(chat_aliases.esprilist))
+
+        elif dmsg[:7] == "/deneme":
+            broadcast(dmsg, f"{dt}: {name}: ")
+            time.sleep(0.2)
             try:
-                no=int(dmsg[8:])
+                no = int(dmsg[8:])
             except:
                 botcast("böyle numara olmaz olsun")
                 continue
-            ad=denemefetch.find_ad_from_no(no)
-            if ad==-1:
+            ad = denemefetch.find_ad_from_no(no)
+            if ad == -1:
                 botcast("bana doğru düzgün numara ver")
             else:
                 try:
-                    sonuc=denemefetch.getSonuc(ad,no,denemefetch.url,denemefetch.puanbosluk)
-                    t="\nsonuçlar\n========\n"
+                    sonuc = denemefetch.getSonuc(
+                        ad, no, denemefetch.url, denemefetch.puanbosluk
+                    )
+                    t = "\nsonuçlar\n========\n"
                     for key, value in sonuc.items():
-                        t+=f" \n{key:16} {value}"
+                        t += f" \n{key:16} {value}"
                     botcast(t)
                 except:
                     botcast("bir şey oldu, sonucu bulamadım")
@@ -297,9 +336,11 @@ def handle(c):
 
         else:
             broadcast(dmsg, f"{dt}: {name}: ")
-            if "sa" in dmsg.lower().split():
+            if any(x in chat_aliases.autoreply for x in dmsg.lower().split()):
+                inp=[x for x in chat_aliases.autoreply if x in dmsg.lower().split()][0]
                 time.sleep(0.2)
-                botcast("as")
+                botcast(chat_aliases.autoreply[inp])
+                break
 
 
 if __name__ == "__main__":
