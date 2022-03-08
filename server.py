@@ -205,7 +205,7 @@ def handle(c):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: spam")
 
-        elif (datetime.now() - clist[c][4][0]).seconds <= 15 and not isAdmin(name):
+        elif (datetime.now() - clist[c][4][0]).seconds <= 20 and not isAdmin(name):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: spam")
 
@@ -321,6 +321,7 @@ def handle(c):
                 botcast("kendi kendini pinglemek çok aptalca, pinglemiyorum", c)
             else:
                 broadcast(dmsg, f"{dt}: {name}: ")
+                time.sleep(0.2)
                 if usertoping == "insanolanbot":
                     botcast("noldu?")
                 else:
