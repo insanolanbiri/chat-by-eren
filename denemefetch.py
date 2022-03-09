@@ -142,16 +142,25 @@ def getSonuc(ad, numara, url, puanbosluk):
         "ad": ad,
         "no": numara,
         "sınıf": sinif,
+        "": "",  # mükemmel
         "sınıf derece": sinifdrc,
         "kurum derece": kurumdrc,
         "il derece": ildrc,
         "genel derece": geneldrc,
+        " ": "",  # mükemmel
         "puan": puan,
         "soru sayısı": sorusayi,
         "doğru sayısı": dogrusayi,
         "yanlış sayısı": yanlissayi,
         "boş sayısı": bossayi,
         "net": netsayi,
+        "  ": "",  # mükemmel
+        "fizik:": "",
+        "  soru sayısı": fiz_s,
+        "  doğru sayısı": fiz_d,
+        "  yanlış sayısı": fiz_y,
+        "  boş sayısı": fiz_b,
+        "  net": fiz_n,
     }
 
 
