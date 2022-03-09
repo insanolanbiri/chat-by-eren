@@ -205,7 +205,7 @@ def handle(c):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: spam")
 
-        elif (datetime.now() - clist[c][4][0]).seconds <= 20 and not isAdmin(name):
+        elif (datetime.now() - clist[c][4][0]).seconds <= 10 and not isAdmin(name):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: spam")
 
