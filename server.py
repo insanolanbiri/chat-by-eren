@@ -1,4 +1,4 @@
-import time, hashlib, random
+import time, hashlib, random, rsa, aes, os
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
 from datetime import datetime
@@ -7,7 +7,7 @@ import chat_aliases, denemefetch
 
 # TODO: insanolanbot class
 # TODO: insanolanbot komutları
-# TODO: try except pass saçmalığı
+# TODO: try: ...; except: pass saçmalığı
 # TODO: admin yönetim
 # TODO: espri format
 
@@ -17,6 +17,7 @@ BUFFSIZE = 16384
 MAX_CONN = 50
 NAME = "Chat by Eren"
 BOT_NAME = "insanolanbot [✓BOT]"
+text_spam_mute = False
 blacklist = [line.strip().lower() for line in open("blacklist.txt", "r")]
 
 ADDR = (HOST, PORT)
@@ -32,7 +33,8 @@ def broadcast(msg, prefix=""):
     for c in dict(clist):
         if clist[c][1]:
             try:
-                c.send(bytes(prefix + msg, "utf16"))
+                aeskey = clist[c][7]
+                c.send(aes.encrypt(aeskey, bytes(prefix + msg, "utf16")))
             except:
                 del clist[c]
 
@@ -43,10 +45,6 @@ def check31(text):
         return a in (31.0, 13.0)
     except:
         return False
-
-
-def welcomeToTurkey(c, name):
-    global NAME
 
 
 def isAdmin(name):
@@ -63,9 +61,11 @@ def isUserIn(name):
 
 def send(c, msg):
     try:
-        c.send(bytes(msg, "utf16"))
-    except:
+        aeskey = clist[c][7]
+        c.send(aes.encrypt(aeskey, bytes(msg, "utf16")))
+    except Exception as e:
         del clist[c]
+        print(e)
 
 
 def botcast(msg, to=False):
@@ -77,30 +77,50 @@ def botcast(msg, to=False):
 
 def accept():
     while True:
-        c, cAddress = SERVER.accept()
-        send(
-            c,
-            "\n".join(
-                [
-                    chat_aliases.aliases["/chatbyeren"],
-                    "seni *mükemmel* tanımlayan bir kullanıcı adı seçip yolla",
-                ]
-            ),
-        )
+        if True:
+            c, cAddress = SERVER.accept()
+            c.send(pubkey.save_pkcs1("DER"))
+            c_pubkey = rsa.PublicKey.load_pkcs1(c.recv(BUFFSIZE), "DER")
+            c_pubkey_hash = hashlib.sha256(str(c_pubkey).encode("utf-16")).hexdigest()
+            print(
+                f"[rsa] {cAddress[0]}:{cAddress[1]}'in açık anahtarının sha256 hash'i:"
+            )
+            print("[rsa] " + c_pubkey_hash)
+            aes_key = os.urandom(16)
 
-        clist[c] = [
-            None,  # ip,port
-            None,  # username
-            False,  # is an admin
-            [None, None, None],  # last 3 messages
-            [datetime.min, datetime.min, datetime.min],  # dates of last 3 messages
-        ]
-        clist[c][0] = cAddress
-        Thread(target=handle, args=(c,)).start()
+            clist[c] = [
+                cAddress,  # ip,port
+                None,  # username
+                False,  # is an admin
+                [None, None, None],  # last 3 messages
+                [datetime.min, datetime.min, datetime.min],  # dates of last 3 messages
+                c_pubkey,
+                c_pubkey_hash,
+                aes_key,
+            ]
+            print(
+                f"[rsa] {clist[c][0][0]}:{clist[c][0][1]}'e aes anahtarı gönderiliyor"
+            )
+            c.send(rsa.encrypt(aes_key, c_pubkey))
+            sign = rsa.sign(aes_key, privkey, "SHA-1")
+            time.sleep(0.1)
+            c.send(sign)
+            send(
+                c,
+                "\n".join(
+                    [
+                        chat_aliases.aliases["/chatbyeren"],
+                        "seni *mükemmel* tanımlayan bir kullanıcı adı seçip yolla",
+                    ]
+                ),
+            )
+            Thread(target=handle, args=(c,)).start()
+        # except Exception as e:
+        # print(e)
 
 
 def handle(c):
-    name = c.recv(BUFFSIZE).decode("utf16")
+    name = aes.decrypt(clist[c][7], c.recv(BUFFSIZE)).decode("utf16")
     if name == "insanolanbiri":
         send(
             c,
@@ -171,7 +191,7 @@ def handle(c):
     botcast(f"hoşgeldin {name}!")
     while True:
         try:
-            msg = c.recv(BUFFSIZE)
+            msg = aes.decrypt(clist[c][7], c.recv(BUFFSIZE))
             dmsg = msg.decode("utf16")
             dt = datetime.now().strftime("%H:%M")
             (clist[c][3]).append(dmsg)
@@ -201,7 +221,9 @@ def handle(c):
         elif name in muted_list:
             botcast("susturuldun dostum, mesajların iletilmiyor", c)
 
-        elif clist[c][3][0] == clist[c][3][1] == clist[c][3][2] and not isAdmin(name):
+        elif text_spam_mute and (
+            clist[c][3][0] == clist[c][3][1] == clist[c][3][2] and not isAdmin(name)
+        ):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: spam")
 
@@ -338,13 +360,21 @@ def handle(c):
         else:
             broadcast(dmsg, f"{dt}: {name}: ")
             if any(x in chat_aliases.autoreply for x in dmsg.lower().split()):
-                inp=[x for x in chat_aliases.autoreply if x in dmsg.lower().split()][0]
+                inp = [x for x in chat_aliases.autoreply if x in dmsg.lower().split()][
+                    0
+                ]
                 time.sleep(0.2)
                 botcast(chat_aliases.autoreply[inp])
                 break
 
 
 if __name__ == "__main__":
+    print("[rsa] anahtar oluşturuluyor: 1024 bit")
+    pubkey, privkey = rsa.newkeys(1024)  # 1024 bit
+    pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
+    print("[rsa] anahtar oluşturuldu")
+    print("[rsa] açık anahtarımızın sha256 hash'i:")
+    print("[rsa] " + pub_sha256)
     SERVER.listen(MAX_CONN)
     print(f"{NAME}: sunucu çalışır durumda\n")
     ACCEPT_THREAD = Thread(target=accept)

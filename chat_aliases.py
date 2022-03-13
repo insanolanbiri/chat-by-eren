@@ -1,4 +1,22 @@
 aliases = {
+    "/şifreleme": """
+Chat by Eren'de şifrelenmiş mesajlar hakkında
+=============================================
+eğer bağlantı kurulurken herhangi bir atak yapılmadıysa
+gönderdiğininiz mesajların üçüncü kişiler tarafından
+okunamayacağı anlamına gelir
+
+nasıl çalıştığını basitçe açıklmamak gerekirse;
+- sunucu istemciye rsa açık anahtarını gönderir
+- istemci sunucuya rsa açık anahtarını gönderir
+- sunucu istemciye aes anahtarını;
+   rsa ile şifreleyip,
+   rsa ile imzalayıp gönderir
+- bundan sonraki her mesaj yalnızca aes ile şifrelenir
+
+not: bu sistem uçtan uca şifreleme *değildir*, çünkü
+     şifreleme sadece istemci-sunucu arasında
+     geçerlidir. sunucuda mesajlar deşifrelenir.""",
     "/trollface": """
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠛⠉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⡉⡉⡉⠙⠙⠙⠛⠛⠛⠻⠿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⢀⣴⣾⣿⣿⣿⣿⡿⢟⣛⣭⣽⣶⣶⣶⢶⢶⣶⣾⣯⣯⣭⣭⣽⣽⣽⣷⣶⣦⣤⣤⣤⣀⡉⠙⠻⢿⣿⣿⣿⣿⣿⣿⣿
@@ -21,9 +39,7 @@ aliases = {
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣤⣀⠉⠛⠿⢶⣾⣭⣽⣓⣺⠽⠭⣭⣭⣭⣽⣽⣟⣟⣟⣟⣟⣿⣭⣵⣾⣿⡿⢟⣫⣾⣿⣷⠄⣿⣿
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⣄⡉⠙⠻⢿⣿⣿⣿⣿⣶⣶⣾⣾⣯⣯⣯⣭⣭⣭⣭⣭⣭⣷⣾⣿⣿⣿⣿⠃⢠⣿⣿
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣷⣦⣤⣀⡉⠉⠙⠛⠻⠿⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠿⠛⢁⣰⣿⣿⣿
-⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣦⣤⣄⣈⣉⣉⣉⣉⣉⣉⣉⣉⣉⣠⣤⣶⣿⣿⣿⣿⣿
-
-""",
+⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣶⣶⣦⣤⣄⣈⣉⣉⣉⣉⣉⣉⣉⣉⣉⣠⣤⣶⣿⣿⣿⣿⣿""",
     "/reis": """
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡿⢟⢛⠍⠍⢍⠍⡫⢛⠻⢿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿r
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⡟⡃⢌⢐⢰⢨⢪⢰⢨⡰⡱⡌⡆⠝⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿e
@@ -525,13 +541,13 @@ kullanılabilecek komutlar
 
 def strkullanicilar(tuple):
     text = ""
-    for (ip, port), name, isAdmin, lastmsgs, lasttimes in tuple:
-        if name != None:
-            if isAdmin:
+    for i in tuple:
+        if i[1] != None:
+            if i[2]:
                 a = "*"
             else:
                 a = " "
-            text += f"{a}     {ip:^13s}   {name:^17s}\n"
+            text += f"{a}     {i[0][0]:^13s}   {i[1]:^17s}\n"
     return f"""
 chatteki kullanıcılar
 =====================
