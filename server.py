@@ -369,8 +369,8 @@ def handle(c):
 
 
 if __name__ == "__main__":
-    print("[rsa] anahtar oluşturuluyor: 1024 bit")
-    pubkey, privkey = rsa.newkeys(1024)  # 1024 bit
+    print("[rsa] anahtar oluşturuluyor: 2048 bit")
+    pubkey, privkey = rsa.newkeys(2048)  # 2048 bit
     pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
     print("[rsa] anahtar oluşturuldu")
     print("[rsa] açık anahtarımızın sha256 hash'i:")

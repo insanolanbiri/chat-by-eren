@@ -175,8 +175,8 @@ if __name__ == "__main__":
 
     top.protocol("WM_DELETE_WINDOW", close)
     insertline("şifreleme algoritması olarak aes (rsa üzerinden) kullanılıyor")
-    insertline("[rsa] anahtar oluşturuluyor: 1024 bit")
-    pubkey, privkey = rsa.newkeys(1024)  # 1024 bit
+    insertline("[rsa] anahtar oluşturuluyor: 2048 bit")
+    pubkey, privkey = rsa.newkeys(2048)  # 2048 bit
     pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
     insertline("[rsa] anahtar oluşturuldu")
     insertline("[rsa] açık anahtarımızın sha256 hash'i:")
