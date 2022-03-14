@@ -2,6 +2,7 @@ import os, sys, tkinter, rsa, hashlib, aes, time
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
 from tkinter.constants import DISABLED, END, FALSE
+
 sys.path.append(os.path.abspath(__file__))
 
 PORT = 5544
@@ -51,9 +52,7 @@ her neyse, hangi sunucu: """
     s_pubkey = rsa.PublicKey.load_pkcs1(clientSocket.recv(BUFFSIZE), "DER")
     clientSocket.send(pubkey.save_pkcs1("DER"))
     insertline("[rsa] sunucunun açık anahtarının sha256 hash'i:")
-    insertline(
-        "[rsa] " + hashlib.sha256(str(s_pubkey).encode("utf-16")).hexdigest()
-    )
+    insertline("[rsa] " + hashlib.sha256(str(s_pubkey).encode("utf-16")).hexdigest())
     insertline("[rsa] aes anahtarı bekleniyor")
     aeskey = rsa.decrypt(clientSocket.recv(BUFFSIZE), privkey)
     insertline("[rsa] şifrelenmiş aes anahtarı alındı")
@@ -73,7 +72,7 @@ her neyse, hangi sunucu: """
         insertline("[rsa] imza geçersiz, bağlantı kapatılıyor")
         clientSocket.close()
         while True:
-            time.sleep(1000)
+            pass  # time.sleep(1000)
 
     while True:
         try:

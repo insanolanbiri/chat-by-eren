@@ -69,15 +69,16 @@ def send(c, msg):
 
 
 def botcast(msg, to=False):
+    dt = datetime.now().strftime("%H:%M")
     if to:
-        send(to, f"dm: {BOT_NAME}: " + msg)
+        send(to, f"dm: {dt}: {BOT_NAME}: " + msg)
     else:
-        broadcast(msg, prefix=f"{BOT_NAME}: ")
+        broadcast(msg, prefix=f"{dt}: {BOT_NAME}: ")
 
 
 def accept():
     while True:
-        if True:
+        try:
             c, cAddress = SERVER.accept()
             c.send(pubkey.save_pkcs1("DER"))
             c_pubkey = rsa.PublicKey.load_pkcs1(c.recv(BUFFSIZE), "DER")
@@ -103,7 +104,7 @@ def accept():
             )
             c.send(rsa.encrypt(aes_key, c_pubkey))
             sign = rsa.sign(aes_key, privkey, "SHA-1")
-            time.sleep(0.1)
+            # time.sleep(0.1)
             c.send(sign)
             send(
                 c,
@@ -115,8 +116,8 @@ def accept():
                 ),
             )
             Thread(target=handle, args=(c,)).start()
-        # except Exception as e:
-        # print(e)
+        except Exception as e:
+            print(e)
 
 
 def handle(c):
@@ -175,6 +176,7 @@ def handle(c):
                 break
     welcome = (
         f"{NAME}'e hoşgeldin {name}, yardım için /help yaz",
+        "Chat by Eren'deki şifreleme hakkında: /şifreleme",
         "UYARI: BU CHAT 7/24 REİS TARAFINDAN İNCELENMEKTEDİR",
         "BAŞINIZA BELA OLACAK YAZILAR YAZMAYIN. UYARILDINIZ!",
         chat_aliases.aliases["/reis"],
@@ -187,7 +189,7 @@ def handle(c):
     clist[c][1] = name
     if name in adminstatic:
         clist[c][2] = True
-    time.sleep(0.2)
+    # time.sleep(0.2)
     botcast(f"hoşgeldin {name}!")
     while True:
         try:
@@ -304,14 +306,17 @@ def handle(c):
         elif dmsg == "/usersbroadcast":
             botcast(chat_aliases.strkullanicilar(clist.values()))
 
+        elif dmsg == "/şifreleme":
+            botcast(chat_aliases.sifreleme)
+
         elif dmsg == "/espri":
             broadcast(dmsg, f"{dt}: {name}: ")
-            time.sleep(0.2)
+            # time.sleep(0.2)
             botcast(random.choice(chat_aliases.esprilist))
 
         elif dmsg[:7] == "/deneme":
             broadcast(dmsg, f"{dt}: {name}: ")
-            time.sleep(0.2)
+            # time.sleep(0.2)
             try:
                 no = int(dmsg[8:])
             except:
@@ -343,7 +348,7 @@ def handle(c):
                 botcast("kendi kendini pinglemek çok aptalca, pinglemiyorum", c)
             else:
                 broadcast(dmsg, f"{dt}: {name}: ")
-                time.sleep(0.2)
+                # time.sleep(0.2)
                 if usertoping == "insanolanbot":
                     botcast("noldu?")
                 else:
@@ -363,9 +368,8 @@ def handle(c):
                 inp = [x for x in chat_aliases.autoreply if x in dmsg.lower().split()][
                     0
                 ]
-                time.sleep(0.2)
+                # time.sleep(0.2)
                 botcast(chat_aliases.autoreply[inp])
-                break
 
 
 if __name__ == "__main__":

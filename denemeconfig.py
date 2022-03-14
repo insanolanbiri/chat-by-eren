@@ -3,7 +3,7 @@
 url = "https://aydinyayinlari.karnemiz.com/?pg=ogrgiris"  # giriş yapılacak url
 # not: scriptin çalışması için deneme sonuç urlsi `orbim` adındaki
 #      bir şirketin yaptığı arayüzü kullanmalı.
-headless = False  # selenium'un arka planda çalışıp çalışmayacağı
+headless = True  # selenium'un arka planda çalışıp çalışmayacağı
 drv_path = (
     ""  # "geckodriver.exe" # selenium'un kullanacağı driver dosyası, ""=varsayılan
 )

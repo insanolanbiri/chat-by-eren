@@ -1,22 +1,4 @@
 aliases = {
-    "/şifreleme": """
-Chat by Eren'de şifrelenmiş mesajlar hakkında
-=============================================
-eğer bağlantı kurulurken herhangi bir atak yapılmadıysa
-gönderdiğininiz mesajların üçüncü kişiler tarafından
-okunamayacağı anlamına gelir
-
-nasıl çalıştığını basitçe açıklmamak gerekirse;
-- sunucu istemciye rsa açık anahtarını gönderir
-- istemci sunucuya rsa açık anahtarını gönderir
-- sunucu istemciye aes anahtarını;
-   rsa ile şifreleyip,
-   rsa ile imzalayıp gönderir
-- bundan sonraki her mesaj yalnızca aes ile şifrelenir
-
-not: bu sistem uçtan uca şifreleme *değildir*, çünkü
-     şifreleme sadece istemci-sunucu arasında
-     geçerlidir. sunucuda mesajlar deşifrelenir.""",
     "/trollface": """
 ⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⠟⠛⠉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⣉⡉⡉⡉⠙⠙⠙⠛⠛⠛⠻⠿⠿⠿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿⣿
 ⣿⣿⣿⣿⣿⣿⣿⣿⡿⠋⢀⣴⣾⣿⣿⣿⣿⡿⢟⣛⣭⣽⣶⣶⣶⢶⢶⣶⣾⣯⣯⣭⣭⣽⣽⣽⣷⣶⣦⣤⣤⣤⣀⡉⠙⠻⢿⣿⣿⣿⣿⣿⣿⣿
@@ -537,6 +519,25 @@ kullanılabilecek komutlar
 /kick <kullanıcıadı>   (admin)
 /mute <kullanıcıadı>   (admin)
 /unmute <kullanıcıadı> (admin)"""
+
+sifreleme = """
+Chat by Eren'de şifrelenmiş mesajlar hakkında
+=============================================
+eğer bağlantı kurulurken herhangi bir atak yapılmadıysa
+gönderdiğininiz mesajların üçüncü kişiler tarafından
+okunamayacağı anlamına gelir
+
+nasıl çalıştığını basitçe açıklmamak gerekirse;
+ - sunucu istemciye rsa açık anahtarını gönderir
+ - istemci sunucuya rsa açık anahtarını gönderir
+ - sunucu istemciye aes anahtarını;
+    rsa ile şifreleyip,
+    rsa ile imzalayıp gönderir
+ - bundan sonraki her mesaj yalnızca aes ile şifrelenir
+
+not: bu sistem uçtan uca şifreleme *değildir*, çünkü
+     şifreleme sadece istemci-sunucu arasında
+     geçerlidir. sunucuda mesajlar deşifrelenir."""
 
 
 def strkullanicilar(tuple):
