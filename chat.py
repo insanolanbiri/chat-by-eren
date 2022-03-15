@@ -44,6 +44,14 @@ her neyse, hangi sunucu: """
             "\n\ttek yapman gereken klavyedeki lanet olası sayıya basmak gerizekalı\n"
         )
         sys.exit(1)
+        
+    insertline("şifreleme algoritması olarak aes (rsa üzerinden) kullanılıyor")
+    insertline("[rsa] anahtar oluşturuluyor: 2048 bit")
+    pubkey, privkey = rsa.newkeys(2048)  # 2048 bit
+    pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
+    insertline("[rsa] anahtar oluşturuldu")
+    insertline("[rsa] açık anahtarımızın sha256 hash'i:")
+    insertline("[rsa] " + pub_sha256)
 
     ADDR = (HOST, PORT)
     clientSocket = socket(AF_INET, SOCK_STREAM)
@@ -173,13 +181,6 @@ if __name__ == "__main__":
     msgList.place(x=6, y=6, height=545, width=540)
 
     top.protocol("WM_DELETE_WINDOW", close)
-    insertline("şifreleme algoritması olarak aes (rsa üzerinden) kullanılıyor")
-    insertline("[rsa] anahtar oluşturuluyor: 2048 bit")
-    pubkey, privkey = rsa.newkeys(2048)  # 2048 bit
-    pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
-    insertline("[rsa] anahtar oluşturuldu")
-    insertline("[rsa] açık anahtarımızın sha256 hash'i:")
-    insertline("[rsa] " + pub_sha256)
 
     receiveThread = Thread(target=receive)
     receiveThread.start()
