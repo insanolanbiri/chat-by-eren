@@ -229,7 +229,7 @@ def handle(c):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: spam")
 
-        elif (datetime.now() - clist[c][4][0]).seconds <= 10 and not isAdmin(name):
+        elif (datetime.now() - clist[c][4][0]).seconds <= 5 and not isAdmin(name):
             muted_list.append(name)
             botcast(f"{name} oto-susturuldu: spam")
 
@@ -327,9 +327,7 @@ def handle(c):
                 botcast("bana doğru düzgün numara ver")
             else:
                 try:
-                    sonuc = denemefetch.getSonuc(
-                        ad, no, denemefetch.url, denemefetch.puanbosluk
-                    )
+                    sonuc = denemefetch.getSonuc(ad, no)
                     t = "\nsonuçlar\n========\n"
                     for key, value in sonuc.items():
                         t += f" \n{key:16} {value}"
@@ -374,6 +372,7 @@ def handle(c):
 
 if __name__ == "__main__":
     print("[rsa] anahtar oluşturuluyor: 2048 bit")
+    print("[rsa] anahtar algoritması 1 iş parçacığı kullanıyor")
     pubkey, privkey = rsa.newkeys(2048)  # 2048 bit
     pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
     print("[rsa] anahtar oluşturuldu")

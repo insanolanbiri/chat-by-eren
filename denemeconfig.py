@@ -1,13 +1,12 @@
 # deneme ve inceleme için değişkenler dosyası.
 # insanolanbiri/deneme/denemeconfig.py dosyasının düzenlenmiş sürümü.
-url = "https://aydinyayinlari.karnemiz.com/?pg=ogrgiris"  # giriş yapılacak url
+url = "https://bes.karnemiz.com/?pg=ogrgiris"  # giriş yapılacak url
 # not: scriptin çalışması için deneme sonuç urlsi `orbim` adındaki
 #      bir şirketin yaptığı arayüzü kullanmalı.
 headless = True  # selenium'un arka planda çalışıp çalışmayacağı
-drv_path = (
-    ""  # "geckodriver.exe" # selenium'un kullanacağı driver dosyası, ""=varsayılan
-)
-puanbosluk = 6  # aq sitesinde puan yazısı "Puanınız_vs: intPuan" olarak yazıldığı için bunu ekliyoruz.
+deneme_adi="BS 4 9 SINIF"  # deneme adı
+drv_path = ""  # "geckodriver.exe" # selenium'un kullanacağı driver dosyası, ""=varsayılan
+puanbosluk = 5  # aq sitesinde puan yazısı "Puanınız_vs: intPuan" olarak yazıldığı için bunu ekliyoruz.
 i_sinif = "9.Sınıf"  # sınıf seviyesi, boşluk olmadan: "9.Sınıf" gibi.
 i_sehir = "EDİRNE"  # şehir, tamamı büyük harf: "EDİRNE" gibi.
 i_kurum = "Edirne Süleyman Demirel"  # okulun adı, siteye yazıldığında listede ilk sonuç olarak görünmeli.

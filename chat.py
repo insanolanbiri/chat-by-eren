@@ -47,6 +47,7 @@ her neyse, hangi sunucu: """
         
     insertline("şifreleme algoritması olarak aes (rsa üzerinden) kullanılıyor")
     insertline("[rsa] anahtar oluşturuluyor: 2048 bit")
+    insertline("[rsa] anahtar algoritması 1 iş parçacığı kullanıyor")
     pubkey, privkey = rsa.newkeys(2048)  # 2048 bit
     pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
     insertline("[rsa] anahtar oluşturuldu")
@@ -115,7 +116,7 @@ def send(event=None):
 
 def close(event=None):
     try:
-        clientSocket.send(bytes("exit", "utf16"))
+        clientSocket.send(aes.encrypt(aeskey, bytes("exit", "utf16")))
     finally:
         os._exit(0)
 
