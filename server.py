@@ -1,4 +1,5 @@
-import time, hashlib, random, rsa, aes, os
+import time, hashlib, random, rsa, os
+from aes import aes
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
 from datetime import datetime

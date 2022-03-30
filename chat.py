@@ -1,4 +1,5 @@
-import os, sys, tkinter, rsa, hashlib, aes, time
+import os, sys, tkinter, rsa, hashlib, time
+from aes import aes
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
 from tkinter.constants import DISABLED, END, FALSE
