@@ -1,10 +1,10 @@
-import time, hashlib, random, rsa, os
+import time, hashlib, random, rsa, os, denemesonuc
 from aes import aes
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
 from datetime import datetime
 
-import chat_aliases, denemefetch
+import chat_aliases
 
 # TODO: insanolanbot class
 # TODO: insanolanbot komutları
@@ -323,15 +323,38 @@ def handle(c):
             except:
                 botcast("böyle numara olmaz olsun")
                 continue
-            ad = denemefetch.find_ad_from_no(no)
+            ad = denemesonuc.getAd(no)
             if ad == -1:
                 botcast("bana doğru düzgün numara ver")
             else:
                 try:
-                    sonuc = denemefetch.getSonuc(ad, no)
+                    sonuc = denemesonuc.getSonuc(ad, no)
+                    readable_sonuc = {
+                        "Ad": sonuc["ad"],
+                        "Numara": sonuc["no"],
+                        "Sınıf": sonuc["9x"],
+                        " ": " ",
+                        "Derece": " ",
+                        "   Sınıf": sonuc["s_drc"],
+                        "   Kurum": sonuc["k_drc"],
+                        "   İl": sonuc["i_drc"],
+                        "   Genel": sonuc["g_drc"],
+                        "  ": " ",
+                        "Soru Sayısı": sonuc["ss"],
+                        "Doğru Sayısı": sonuc["ds"],
+                        "Yanlış Sayısı": sonuc["ys"],
+                        "Boş Sayısı": sonuc["bs"],
+                        "Puan": sonuc["pn"],
+                        "   ": " ",
+                        "Fizik": " ",
+                        "   Doğru": sonuc["fiz_d"],
+                        "   Yanlış": sonuc["fiz_y"],
+                        "   Boş": sonuc["fiz_b"],
+                        "   Net": sonuc["fiz_n"],
+                    }
                     t = "\nsonuçlar\n========\n"
-                    for key, value in sonuc.items():
-                        t += f" \n{key:16} {value}"
+                    for key, value in readable_sonuc.items():
+                        t += f" \n{key:16}: {value}"
                     botcast(t)
                 except:
                     botcast("bir şey oldu, sonucu bulamadım")
