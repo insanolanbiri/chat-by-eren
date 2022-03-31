@@ -2,7 +2,7 @@ import os, sys, tkinter, rsa, hashlib, time
 from aes import aes
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
-from tkinter.constants import DISABLED, END, FALSE
+from tkinter.constants import DISABLED, END, FALSE, NORMAL
 
 sys.path.append(os.path.abspath(__file__))
 
@@ -82,7 +82,9 @@ her neyse, hangi sunucu: """
         insertline("[rsa] imza geçersiz, bağlantı kapatılıyor")
         clientSocket.close()
         while True:
-            pass  # time.sleep(1000)
+            time.sleep(1000)
+
+    entryField.configure(state=NORMAL)
 
     while True:
         try:
@@ -162,6 +164,8 @@ if __name__ == "__main__":
         font="TkFixedFont",
         foreground="#ccd1d9",
         highlightbackground="#40434b",
+        disabledbackground="#40434b",
+        state=DISABLED,
     )
     entryField.bind("<Return>", send)
     entryField.pack()

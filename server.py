@@ -1,8 +1,9 @@
-import time, hashlib, random, rsa, os, denemesonuc
+import time, hashlib, random, rsa, os
 from aes import aes
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
 from datetime import datetime
+from denemesonuc import *
 
 import chat_aliases
 
@@ -323,12 +324,12 @@ def handle(c):
             except:
                 botcast("böyle numara olmaz olsun")
                 continue
-            ad = denemesonuc.getAd(no)
+            ad = getAd(no)
             if ad == -1:
                 botcast("bana doğru düzgün numara ver")
             else:
                 try:
-                    sonuc = denemesonuc.getSonuc(ad, no)
+                    sonuc = getSonuc(ad, no)
                     readable_sonuc = {
                         "Ad": sonuc["ad"],
                         "Numara": sonuc["no"],
@@ -356,6 +357,8 @@ def handle(c):
                     for key, value in readable_sonuc.items():
                         t += f" \n{key:16}: {value}"
                     botcast(t)
+                except DenemeyeGirmemisException:
+                    botcast(f"{getAd(no)} denemeye girmemiş")
                 except:
                     botcast("bir şey oldu, sonucu bulamadım")
 
