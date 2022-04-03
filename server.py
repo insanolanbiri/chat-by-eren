@@ -7,6 +7,8 @@ from denemesonuc import *
 
 import chat_aliases
 
+### bad code örneği için bu dosyayı kullanabilirsiniz
+
 # TODO: insanolanbot class
 # TODO: insanolanbot komutları
 # TODO: try: ...; except: pass saçmalığı
@@ -86,7 +88,7 @@ def accept():
             c_pubkey = rsa.PublicKey.load_pkcs1(c.recv(BUFFSIZE), "DER")
             c_pubkey_hash = hashlib.sha256(str(c_pubkey).encode("utf-16")).hexdigest()
             print(
-                f"[rsa] {cAddress[0]}:{cAddress[1]}'in açık anahtarının sha256 hash'i:"
+                f"\n[rsa] {cAddress[0]}:{cAddress[1]}'in açık anahtarının sha256 hash'i:"
             )
             print("[rsa] " + c_pubkey_hash)
             aes_key = os.urandom(16)
@@ -187,7 +189,7 @@ def handle(c):
     msg = "\n".join(welcome)
     send(c, msg)
     broadcast(f"{name} bağlandı")
-    print(f"{clist[c][0][0]}:{clist[c][0][1]} ({name}) bağlandı")
+    print(f"{clist[c][0][0]}:{clist[c][0][1]} ({name}) bağlandı\n")
     clist[c][1] = name
     if name in adminstatic:
         clist[c][2] = True
@@ -203,7 +205,7 @@ def handle(c):
             (clist[c][4]).append(datetime.now())
             (clist[c][4]).pop(0)
         except:
-            print(f"{clist[c][0][0]}:{clist[c][0][1]} ({name}) bağlantısı kesildi")
+            print(f"\n{clist[c][0][0]}:{clist[c][0][1]} ({name}) bağlantısı kesildi\n")
             try:
                 del clist[c]
             except:
@@ -217,7 +219,7 @@ def handle(c):
             return None
 
         elif dmsg == "exit":
-            print(f"{clist[c][0][0]}:{clist[c][0][1]} ({name}) ayrıldı")
+            print(f"\n{clist[c][0][0]}:{clist[c][0][1]} ({name}) ayrıldı\n")
             del clist[c]
             broadcast(f"{name} ayrıldı")
             return None
@@ -359,8 +361,9 @@ def handle(c):
                     botcast(t)
                 except DenemeyeGirmemisException:
                     botcast(f"{getAd(no)} denemeye girmemiş")
-                except:
+                except Exception as e:
                     botcast("bir şey oldu, sonucu bulamadım")
+                    botcast(e,c)
 
         elif dmsg[:1] == "/":
             botcast("yok ki öyle bi komut", c)
@@ -406,7 +409,7 @@ if __name__ == "__main__":
     print("[rsa] açık anahtarımızın sha256 hash'i:")
     print("[rsa] " + pub_sha256)
     SERVER.listen(MAX_CONN)
-    print(f"{NAME}: sunucu çalışır durumda\n")
+    print(f"\n{NAME}: sunucu çalışır durumda\n")
     ACCEPT_THREAD = Thread(target=accept)
     ACCEPT_THREAD.start()
     ACCEPT_THREAD.join()
