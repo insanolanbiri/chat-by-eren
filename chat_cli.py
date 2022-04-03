@@ -175,9 +175,12 @@ def receive():
                     line = line[:char] + message
                     for word in line.split(" "):
                         if word[:1] == "/":
-                            line = line.replace(
-                                word, turquoise(word)
-                            )
+                            line = line.replace(word, turquoise(word))
+                    line = (
+                        line.replace("fizik", green("fizik"))
+                        .replace("Fizik", green("Fizik"))
+                        .replace("FİZİK", green("FİZİK"))
+                    )
                     insertline(line)
         except:
             close()
