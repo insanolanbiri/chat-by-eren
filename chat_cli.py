@@ -173,6 +173,11 @@ def receive():
                     message = line[char:]
                     message = message.replace(username, green(username))
                     line = line[:char] + message
+                    for word in line.split(" "):
+                        if word[:1] == "/":
+                            line = line.replace(
+                                word, turquoise(word)
+                            )
                     insertline(line)
         except:
             close()

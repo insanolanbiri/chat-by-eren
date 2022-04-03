@@ -311,7 +311,7 @@ def handle(c):
             botcast(chat_aliases.strkullanicilar(clist.values()))
 
         elif dmsg == "/şifreleme":
-            botcast(chat_aliases.sifreleme)
+            botcast(chat_aliases.sifreleme,c)
 
         elif dmsg == "/espri":
             broadcast(dmsg, f"{dt}: {name}: ")
