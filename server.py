@@ -17,6 +17,8 @@ import chat_aliases
 
 HOST = "0.0.0.0"
 PORT = 5544
+RSA_KEY_SIZE = 2048  # 2048 bit
+AES_KEY_SIZE = 256  # 128 bit
 BUFFSIZE = 16384
 MAX_CONN = 50
 NAME = "Chat by Eren"
@@ -91,7 +93,7 @@ def accept():
                 f"\n[rsa] {cAddress[0]}:{cAddress[1]}'in açık anahtarının sha256 hash'i:"
             )
             print("[rsa] " + c_pubkey_hash)
-            aes_key = os.urandom(16)
+            aes_key = os.urandom(AES_KEY_SIZE//8)
 
             clist[c] = [
                 cAddress,  # ip,port
@@ -164,6 +166,11 @@ def handle(c):
         c.close()
         del clist[c]
         return None
+    elif name.startswith("\\\\?"):
+        send(c, "kullanici adi kacis karakteriyle baslayamaz")
+        c.close()
+        del clist[c]
+        return None
     elif any(kelime in name.lower() for kelime in blacklist):
         send(
             c,
@@ -178,6 +185,7 @@ def handle(c):
             if not isUserIn(f"CokKomikBirArkadas{i}"):
                 name = f"CokKomikBirArkadas{i}"
                 break
+    send(c, f"\\\\?\\user\\name\\{name}")
     welcome = (
         f"{NAME}'e hoşgeldin {name}, yardım için /help yaz",
         "Chat by Eren'deki şifreleme hakkında: /şifreleme",
@@ -311,7 +319,7 @@ def handle(c):
             botcast(chat_aliases.strkullanicilar(clist.values()))
 
         elif dmsg == "/şifreleme":
-            botcast(chat_aliases.sifreleme,c)
+            botcast(chat_aliases.sifreleme, c)
 
         elif dmsg == "/espri":
             broadcast(dmsg, f"{dt}: {name}: ")
@@ -363,7 +371,7 @@ def handle(c):
                     botcast(f"{getAd(no)} denemeye girmemiş")
                 except Exception as e:
                     botcast("bir şey oldu, sonucu bulamadım")
-                    botcast(e,c)
+                    botcast(e, c)
 
         elif dmsg[:1] == "/":
             botcast("yok ki öyle bi komut", c)
@@ -401,9 +409,10 @@ def handle(c):
 
 
 if __name__ == "__main__":
-    print("[rsa] anahtar oluşturuluyor: 2048 bit")
-    print("[rsa] anahtar algoritması 1 iş parçacığı kullanıyor")
-    pubkey, privkey = rsa.newkeys(2048)  # 2048 bit
+    threads = os.cpu_count()
+    print(f"[rsa] anahtar oluşturuluyor: {RSA_KEY_SIZE} bit")
+    print(f"[rsa] anahtar algoritması {threads} iş parçacığı kullanıyor")
+    pubkey, privkey = rsa.newkeys(RSA_KEY_SIZE, poolsize=threads)
     pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
     print("[rsa] anahtar oluşturuldu")
     print("[rsa] açık anahtarımızın sha256 hash'i:")

@@ -7,8 +7,10 @@ from tkinter.constants import DISABLED, END, FALSE, NORMAL
 sys.path.append(os.path.abspath(__file__))
 
 PORT = 5544
+RSA_KEY_SIZE = 2048  # 2048 bit
 BUFFSIZE = 16384
 NAME = "Chat by Eren"
+SHOW_ESCAPE = False
 clientSocket = None
 aeskey = None
 
@@ -45,11 +47,11 @@ her neyse, hangi sunucu: """
             "\n\ttek yapman gereken klavyedeki lanet olası sayıya basmak gerizekalı\n"
         )
         sys.exit(1)
-        
+    threads=os.cpu_count()
     insertline("şifreleme algoritması olarak aes (rsa üzerinden) kullanılıyor")
-    insertline("[rsa] anahtar oluşturuluyor: 2048 bit")
-    insertline("[rsa] anahtar algoritması 1 iş parçacığı kullanıyor")
-    pubkey, privkey = rsa.newkeys(2048)  # 2048 bit
+    insertline(f"[rsa] anahtar oluşturuluyor: {RSA_KEY_SIZE} bit")
+    insertline(f"[rsa] anahtar algoritması {threads} iş parçacığı kullanıyor")
+    pubkey, privkey = rsa.newkeys(RSA_KEY_SIZE,poolsize=threads)
     pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
     insertline("[rsa] anahtar oluşturuldu")
     insertline("[rsa] açık anahtarımızın sha256 hash'i:")
@@ -91,9 +93,10 @@ her neyse, hangi sunucu: """
             msg = clientSocket.recv(BUFFSIZE)
             msg = aes.decrypt(aeskey, msg).decode("utf-16")
             msg = msg.replace("\uFEFF", "")
-            for line in msg.split("\n"):
-                if line != "":
-                    insertline(line)
+            if (not msg.startswith("\\\\?")) or SHOW_ESCAPE:
+                for line in msg.split("\n"):
+                    if line != "":
+                        insertline(line)
         except:
             close()
 

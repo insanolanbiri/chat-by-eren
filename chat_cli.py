@@ -1,13 +1,22 @@
 import os, sys, rsa, hashlib, time
+from typing import TextIO
 import threading
 from aes import aes
 from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
 
 # bad code örneği için bu dosyayı kullanabilirsiniz
+sys.path.append(os.path.abspath(__file__))
 
-isFirstMsg = True
-username = "kesinlikleolamayacakbirstring"
+username = hashlib.sha256(os.urandom(32)).hexdigest()
+SHOW_ESCAPE = False
+RSA_KEY_SIZE = 2048  # 2048 bit
+PORT = 5544
+BUFFSIZE = 16384
+clientSocket = None
+aeskey = None
+
+
 
 
 def blue(string):
@@ -46,13 +55,10 @@ def find_nth(haystack, needle, n):  # https://stackoverflow.com/a/1884277
         return -1
 
 
-sys.path.append(os.path.abspath(__file__))
-
-PORT = 5544
-BUFFSIZE = 16384
-NAME = "Chat by Eren"
-clientSocket = None
-aeskey = None
+def escape(msg: str):
+    global username
+    if msg.startswith("\\\\?\\user\\name\\"):
+        username = msg[14:]
 
 
 print(
@@ -101,10 +107,13 @@ except (EOFError, KeyboardInterrupt):
     print("")
     sys.exit(1)
 
+threads = os.cpu_count()
 insertline(blue("şifreleme algoritması olarak aes (rsa üzerinden) kullanılıyor"))
-insertline("[rsa] " + turquoise("anahtar oluşturuluyor: 2048 bit"))
-insertline("[rsa] " + turquoise("anahtar algoritması 1 iş parçacığı kullanıyor"))
-pubkey, privkey = rsa.newkeys(2048)  # 2048 bit
+insertline("[rsa] " + turquoise(f"anahtar oluşturuluyor: {RSA_KEY_SIZE} bit"))
+insertline(
+    "[rsa] " + turquoise(f"anahtar algoritması {threads} iş parçacığı kullanıyor")
+)
+pubkey, privkey = rsa.newkeys(RSA_KEY_SIZE, poolsize=threads)
 pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
 insertline("[rsa] " + blue("anahtar oluşturuldu"))
 insertline("[rsa] " + blue("açık anahtarımızın sha256 hash'i:"))
@@ -145,11 +154,17 @@ def receive():
             msg = clientSocket.recv(BUFFSIZE)
             msg = aes.decrypt(aeskey, msg).decode("utf-16")
             msg = msg.replace("\uFEFF", "")
+            msg = msg.rstrip("\n")
+            if msg.startswith("\\\\?"):
+                if SHOW_ESCAPE:
+                    insertline(msg)
+                escape(msg)
+                continue
             for line in msg.split("\n"):
                 if line != "":
                     char = 0
                     try:
-                        if line[2] == ":" and line[5] == ":":
+                        if line[2] == ":" and line[5] == ":":  # hh:mm: user: message
                             char = find_nth(line, ":", 3)
                             line = (
                                 yellow(line[:5])
@@ -158,7 +173,8 @@ def receive():
                                 + ": "
                                 + line[char + 2 :]
                             )
-                        elif line[:4] == "dm: ":
+                            char+=2
+                        elif line[:4] == "dm: ":  # dm: hh:mm: user: message
                             char = find_nth(line, ":", 4)
                             line = (
                                 green(line[:2])
@@ -170,24 +186,23 @@ def receive():
                             )
                     except IndexError:
                         pass
-                    message = line[char:]
-                    message = message.replace(username, green(username))
-                    line = line[:char] + message
+                    line=line[:char]+line[char:].replace(username,green(username))
+                    replacements = {
+                        "fizik": green("fizik"),
+                        "Fizik": green("Fizik"),
+                        "FİZİK": green("FİZİK"),
+                    }
                     for word in line.split(" "):
-                        if word[:1] == "/":
+                        if word[:1] == "/" and len(word) > 2:
                             line = line.replace(word, turquoise(word))
-                    line = (
-                        line.replace("fizik", green("fizik"))
-                        .replace("Fizik", green("Fizik"))
-                        .replace("FİZİK", green("FİZİK"))
-                    )
+                    for before in replacements:
+                        line=line.replace(before,replacements[before])
                     insertline(line)
         except:
             close()
 
 
 def write(event=None):
-    global username, isFirstMsg
     while True:
         msg = sys.stdin.readline()
         msg = msg.replace("\n", "")
@@ -199,14 +214,6 @@ def write(event=None):
         elif len(msg) > 500:
             insertline(red("mesajın çok uzundu, gönderemedim"))
         elif msg != "":
-            if isFirstMsg:
-                username = msg
-                if (
-                    hashlib.sha256(bytes(username, "utf16")).hexdigest()
-                    == "a8cd9e8bac481f76fc0bf19bd51276e1e7e47f43880267bc3a21fad20639c5f1"
-                ):  # hakan ne gerek vardı dimi buna
-                    username = "insanolanbiri"
-                isFirstMsg = False
             try:
                 clientSocket.send(aes.encrypt(aeskey, bytes(msg, "utf16")))
             except:
