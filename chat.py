@@ -4,6 +4,8 @@ from socket import AF_INET, SOCK_STREAM, socket
 from threading import Thread
 from tkinter.constants import DISABLED, END, FALSE, NORMAL
 
+# tkinter çok can sıkıcı. chat_cli daha iyi
+
 sys.path.append(os.path.abspath(__file__))
 
 PORT = 5544
@@ -43,15 +45,13 @@ her neyse, hangi sunucu: """
         else:
             raise ValueError
     except ValueError:
-        print(
-            "\n\ttek yapman gereken klavyedeki lanet olası sayıya basmak gerizekalı\n"
-        )
+        print("\n\ttek yapman gereken klavyedeki lanet olası sayıya basmak gerizekalı\n")
         sys.exit(1)
-    threads=os.cpu_count()
+    threads = os.cpu_count()
     insertline("şifreleme algoritması olarak aes (rsa üzerinden) kullanılıyor")
     insertline(f"[rsa] anahtar oluşturuluyor: {RSA_KEY_SIZE} bit")
     insertline(f"[rsa] anahtar algoritması {threads} iş parçacığı kullanıyor")
-    pubkey, privkey = rsa.newkeys(RSA_KEY_SIZE,poolsize=threads)
+    pubkey, privkey = rsa.newkeys(RSA_KEY_SIZE, poolsize=threads)
     pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
     insertline("[rsa] anahtar oluşturuldu")
     insertline("[rsa] açık anahtarımızın sha256 hash'i:")

@@ -212,8 +212,8 @@ def handle(c):
             (clist[c][3]).pop(0)
             (clist[c][4]).append(datetime.now())
             (clist[c][4]).pop(0)
-        except:
-            print(f"\n{clist[c][0][0]}:{clist[c][0][1]} ({name}) bağlantısı kesildi\n")
+        except Exception as e:
+            print(f"\n{clist[c][0][0]}:{clist[c][0][1]} ({name}) bağlantısı kesildi: {e}\n")
             try:
                 del clist[c]
             except:
@@ -341,27 +341,27 @@ def handle(c):
                 try:
                     sonuc = getSonuc(ad, no)
                     readable_sonuc = {
-                        "Ad": sonuc["ad"],
-                        "Numara": sonuc["no"],
-                        "Sınıf": sonuc["9x"],
+                        "ad": sonuc["ad"],
+                        "numara": sonuc["no"],
+                        "sınıf": sonuc["9x"],
                         " ": " ",
-                        "Derece": " ",
-                        "   Sınıf": sonuc["s_drc"],
-                        "   Kurum": sonuc["k_drc"],
-                        "   İl": sonuc["i_drc"],
-                        "   Genel": sonuc["g_drc"],
+                        "derece": " ",
+                        "   sınıf": sonuc["s_drc"],
+                        "   kurum": sonuc["k_drc"],
+                        "   il": sonuc["i_drc"],
+                        "   genel": sonuc["g_drc"],
                         "  ": " ",
-                        "Soru Sayısı": sonuc["ss"],
-                        "Doğru Sayısı": sonuc["ds"],
-                        "Yanlış Sayısı": sonuc["ys"],
-                        "Boş Sayısı": sonuc["bs"],
-                        "Puan": sonuc["pn"],
+                        "soru sayısı": sonuc["ss"],
+                        "doğru sayısı": sonuc["ds"],
+                        "yanlış sayısı": sonuc["ys"],
+                        "boş sayısı": sonuc["bs"],
+                        "puan": sonuc["pn"],
                         "   ": " ",
-                        "Fizik": " ",
-                        "   Doğru": sonuc["fiz_d"],
-                        "   Yanlış": sonuc["fiz_y"],
-                        "   Boş": sonuc["fiz_b"],
-                        "   Net": sonuc["fiz_n"],
+                        "fizik": " ",
+                        "   doğru": sonuc["fiz_d"],
+                        "   yanlış": sonuc["fiz_y"],
+                        "   boş": sonuc["fiz_b"],
+                        "   net": sonuc["fiz_n"],
                     }
                     t = "\nsonuçlar\n========\n"
                     for key, value in readable_sonuc.items():
