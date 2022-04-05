@@ -128,6 +128,8 @@ def accept():
 
 def handle(c):
     name = aes.decrypt(clist[c][7], c.recv(BUFFSIZE)).decode("utf16")
+    # sürekli mesaj atılırsa aes decrypt çöküyor
+    # its not a bug its a feature
     if name == "insanolanbiri":
         send(
             c,
