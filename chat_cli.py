@@ -190,7 +190,7 @@ writeline(f"anahtar algoritması {threads} iş parçacığı kullanıyor", turqu
 pubkey, privkey = rsa.newkeys(RSA_KEY_SIZE, poolsize=threads)
 pub_sha256 = hashlib.sha256(str(pubkey).encode("utf-16")).hexdigest()
 
-writeline("anahtar oluşturuldu")
+writeline("anahtar oluşturuldu",head="rsa")
 writeline("açık anahtarımızın sha256 hash'i:", turquoise, "rsa")
 writeline(pub_sha256, green, "rsa")
 
