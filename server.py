@@ -18,7 +18,7 @@ import chat_aliases
 HOST = "0.0.0.0"
 PORT = 5544
 RSA_KEY_SIZE = 2048  # 2048 bit
-AES_KEY_SIZE = 256  # 128 bit
+AES_KEY_SIZE = 128  # 128 bit
 BUFFSIZE = 16384
 MAX_CONN = 50
 NAME = "Chat by Eren"
