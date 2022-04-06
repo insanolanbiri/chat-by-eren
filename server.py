@@ -89,11 +89,9 @@ def accept():
             c.send(pubkey.save_pkcs1("DER"))
             c_pubkey = rsa.PublicKey.load_pkcs1(c.recv(BUFFSIZE), "DER")
             c_pubkey_hash = hashlib.sha256(str(c_pubkey).encode("utf-16")).hexdigest()
-            print(
-                f"\n[rsa] {cAddress[0]}:{cAddress[1]}'in açık anahtarının sha256 hash'i:"
-            )
+            print(f"\n[rsa] {cAddress[0]}:{cAddress[1]}'in açık anahtarının sha256 hash'i:")
             print("[rsa] " + c_pubkey_hash)
-            aes_key = os.urandom(AES_KEY_SIZE//8)
+            aes_key = os.urandom(AES_KEY_SIZE // 8)
 
             clist[c] = [
                 cAddress,  # ip,port
@@ -105,9 +103,7 @@ def accept():
                 c_pubkey_hash,
                 aes_key,
             ]
-            print(
-                f"[rsa] {clist[c][0][0]}:{clist[c][0][1]}'e aes anahtarı gönderiliyor"
-            )
+            print(f"[rsa] {clist[c][0][0]}:{clist[c][0][1]}'e aes anahtarı gönderiliyor")
             c.send(rsa.encrypt(aes_key, c_pubkey))
             sign = rsa.sign(aes_key, privkey, "SHA-1")
             # time.sleep(0.1)
@@ -156,9 +152,7 @@ def handle(c):
         del clist[c]
         return None
     elif isUserIn(name):
-        send(
-            c, "bu kullanıcı adı alınmış, başka bir tane dene\nbağlantı sonlandırılıyor"
-        )
+        send(c, "bu kullanıcı adı alınmış, başka bir tane dene\nbağlantı sonlandırılıyor")
         c.close()
         del clist[c]
         return None
@@ -403,9 +397,7 @@ def handle(c):
         else:
             broadcast(dmsg, f"{dt}: {name}: ")
             if any(x in chat_aliases.autoreply for x in dmsg.lower().split()):
-                inp = [x for x in chat_aliases.autoreply if x in dmsg.lower().split()][
-                    0
-                ]
+                inp = [x for x in chat_aliases.autoreply if x in dmsg.lower().split()][0]
                 # time.sleep(0.2)
                 botcast(chat_aliases.autoreply[inp])
 
